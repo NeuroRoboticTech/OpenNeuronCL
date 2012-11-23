@@ -10,6 +10,10 @@
 // Windows Header Files:
 #include <windows.h>
 
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+
 #include <conio.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
@@ -22,7 +26,6 @@
 #include <sstream>
 #include <fstream>
 #include <iterator>
-#include <iostream>
 #include <vector>
 #include <deque>
 #include <stack>
@@ -39,5 +42,6 @@
 #include <wtypes.h>
 #include <vfw.h>
 using namespace std;
+
 
 #include "OpenNeuronCLIncludes.h"
