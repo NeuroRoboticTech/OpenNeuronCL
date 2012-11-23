@@ -101,7 +101,7 @@
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)OpenNeuronCL_vc10D.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>OpenCL.lib;shrUtils32D.lib;oclUtils32D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>Copy "$(OutDir)OpenNeuronCL_vc10D.lib" ..\..\..\AnimatLabPublicSource\lib\OpenNeuronCL_vc10D.lib
@@ -135,7 +135,7 @@ Copy "$(TargetPath)" ..\..\bin
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)OpenNeuronCL_vc10.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>OpenCL.lib;shrUtils32D.lib;oclUtils32D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>Copy "$(OutDir)OpenNeuronCL_vc10.lib" ..\..\..\AnimatLabPublicSource\lib\OpenNeuronCL_vc10.lib
@@ -169,7 +169,7 @@ Copy "$(TargetPath)" ..\..\bin
       </DataExecutionPrevention>
       <ImportLibrary>$(OutDir)OpenNeuronCL_vc10.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>OpenCL.lib;shrUtils32D.lib;oclUtils32D.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>Copy "$(OutDir)OpenNeuronCL_vc10.lib" ..\..\..\AnimatLabPublicSource\lib\OpenNeuronCL_vc10.lib
