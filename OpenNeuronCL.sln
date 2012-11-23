@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenNeuronCL", "Libraries\OpenNeuronCL\OpenNeuronCL.vcxproj", "{5E740A4B-11BA-49CD-9FCA-7475B46E34BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenAnimatNeuronCL", "Libraries\OpenAnimatNeuronCL\OpenAnimatNeuronCL.vcxproj", "{1C40F91C-9EFA-4C87-BC70-9ADE4F2FFD86}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenNeuronCL_ConsoleTest", "Libraries\OpenNeuronCL_ConsoleTest\OpenNeuronCL_ConsoleTest.vcxproj", "{D298F9AF-193E-4B56-AA93-9F0BA3778B55}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E740A4B-11BA-49CD-9FCA-7475B46E34BE} = {5E740A4B-11BA-49CD-9FCA-7475B46E34BE}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		ReleaseUnoptimizedWithSymbols|Win32 = ReleaseUnoptimizedWithSymbols|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E740A4B-11BA-49CD-9FCA-7475B46E34BE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5E740A4B-11BA-49CD-9FCA-7475B46E34BE}.Debug|Win32.Build.0 = Debug|Win32
+		{5E740A4B-11BA-49CD-9FCA-7475B46E34BE}.Release|Win32.ActiveCfg = Release|Win32
+		{5E740A4B-11BA-49CD-9FCA-7475B46E34BE}.Release|Win32.Build.0 = Release|Win32
+		{5E740A4B-11BA-49CD-9FCA-7475B46E34BE}.ReleaseUnoptimizedWithSymbols|Win32.ActiveCfg = ReleaseUnoptimizedWithSymbols|Win32
+		{5E740A4B-11BA-49CD-9FCA-7475B46E34BE}.ReleaseUnoptimizedWithSymbols|Win32.Build.0 = ReleaseUnoptimizedWithSymbols|Win32
+		{1C40F91C-9EFA-4C87-BC70-9ADE4F2FFD86}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1C40F91C-9EFA-4C87-BC70-9ADE4F2FFD86}.Debug|Win32.Build.0 = Debug|Win32
+		{1C40F91C-9EFA-4C87-BC70-9ADE4F2FFD86}.Release|Win32.ActiveCfg = Release|Win32
+		{1C40F91C-9EFA-4C87-BC70-9ADE4F2FFD86}.Release|Win32.Build.0 = Release|Win32
+		{1C40F91C-9EFA-4C87-BC70-9ADE4F2FFD86}.ReleaseUnoptimizedWithSymbols|Win32.ActiveCfg = ReleaseUnoptimizedWithSymbols|Win32
+		{1C40F91C-9EFA-4C87-BC70-9ADE4F2FFD86}.ReleaseUnoptimizedWithSymbols|Win32.Build.0 = ReleaseUnoptimizedWithSymbols|Win32
+		{D298F9AF-193E-4B56-AA93-9F0BA3778B55}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D298F9AF-193E-4B56-AA93-9F0BA3778B55}.Debug|Win32.Build.0 = Debug|Win32
+		{D298F9AF-193E-4B56-AA93-9F0BA3778B55}.Release|Win32.ActiveCfg = Release|Win32
+		{D298F9AF-193E-4B56-AA93-9F0BA3778B55}.Release|Win32.Build.0 = Release|Win32
+		{D298F9AF-193E-4B56-AA93-9F0BA3778B55}.ReleaseUnoptimizedWithSymbols|Win32.ActiveCfg = Release|Win32
+		{D298F9AF-193E-4B56-AA93-9F0BA3778B55}.ReleaseUnoptimizedWithSymbols|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
