@@ -2,7 +2,7 @@
 #include "TestOpenCL.h"
 
 #define __CL_ENABLE_EXCEPTIONS
-#define PROGRAM_FILE "C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\blank.cl"
+#define PROGRAM_FILE "C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\Kernels\\blank.cl"
 #define KERNEL_FUNC "blank"
 
 #include <CL/cl.hpp>
