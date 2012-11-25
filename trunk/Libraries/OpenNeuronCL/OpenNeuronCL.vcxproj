@@ -196,6 +196,8 @@ Copy "$(TargetPath)" ..\..\bin</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="Kernels\blank.cl" />
+    <None Include="Kernels\FastSpikingNeuron.cl" />
+    <None Include="Kernels\ID_Check.cl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
