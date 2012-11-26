@@ -5,8 +5,8 @@
 
 #include <CL/cl.hpp>
 
-#define DATA_SIZE 100
-#define LOCAL_SIZE 10
+#define DATA_SIZE 4096
+#define LOCAL_SIZE 128
 
 
 namespace OpenNeuronCL
@@ -105,10 +105,12 @@ void TestOpenCL::RunIDCheck()
 void TestOpenCL::RunFastSpikingNeurons()
 {
    string PROGRAM_FILE = "C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\Kernels\\FastSpikingNeuron.cl";
+   string OUTPUT_FILE = "C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\FastSpikingNeuron.dat";
    string KERNEL_FUNC = "FastSpikingNeuron";
 
    std::vector<cl::Platform> platforms;
    std::vector<cl::Device> devices;
+   std::vector<float> aryData;
    int i;
 
    // Data
@@ -116,12 +118,16 @@ void TestOpenCL::RunFastSpikingNeurons()
    cl::NDRange ndLocal(LOCAL_SIZE);
 
    cl_float *aryVmIn, *aryVmOut;
-   cl_float *aryVahp, *aryTestOut;
+   cl_float *aryVahp, *aryIinOn, *aryIinOff, *aryTestOut;
    cl_uchar *aryRefrCount, *arySpiked;
+
+   // std::cout << "Neuron Count: " << DATA_SIZE << std::endl;   
 
    aryVmIn = new cl_float[DATA_SIZE];
    aryVmOut = new cl_float[DATA_SIZE];
    aryVahp = new cl_float[DATA_SIZE];
+   aryIinOn = new cl_float[DATA_SIZE];
+   aryIinOff = new cl_float[DATA_SIZE];
    aryRefrCount = new cl_uchar[DATA_SIZE];
    arySpiked = new cl_uchar[DATA_SIZE];
    aryTestOut = new cl_float[DATA_SIZE];
@@ -129,8 +135,10 @@ void TestOpenCL::RunFastSpikingNeurons()
    try {
       // Initialize data
       for(i=0; i<DATA_SIZE; i++) {
-         aryVmIn[i] = i*0.1f;
+         aryVmIn[i] = 0.0f; //i*0.1f;
 		 aryVahp[i] = 0.0f;
+		 aryIinOn[i] = 0.8f;
+		 aryIinOff[i] = 0.0f;
 		 aryRefrCount[i] = 0;
 		 arySpiked[i] = 0;
       }
@@ -148,7 +156,7 @@ void TestOpenCL::RunFastSpikingNeurons()
             programString.length()+1));
       cl::Program program(context, source);
 
-	  //std::cout << "Program kernel: " << std::endl << programString << std::endl;
+	 //std::cout << "Program kernel: " << std::endl << programString << std::endl;
 
 	  try
 	  {
@@ -171,6 +179,8 @@ void TestOpenCL::RunFastSpikingNeurons()
       cl::Buffer bufferVmIn(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(aryVmIn)*DATA_SIZE, aryVmIn);
       cl::Buffer bufferVmOut(context, CL_MEM_WRITE_ONLY, sizeof(aryVmOut)*DATA_SIZE, NULL);
       cl::Buffer bufferVahp(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(aryVahp)*DATA_SIZE, aryVahp);
+      cl::Buffer bufferIinOn(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(aryIinOn)*DATA_SIZE, aryIinOn);
+      cl::Buffer bufferIinOff(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(aryIinOff)*DATA_SIZE, aryIinOff);
       cl::Buffer bufferRefrCount(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(aryRefrCount)*DATA_SIZE, aryRefrCount);
       cl::Buffer bufferSpiked(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(arySpiked)*DATA_SIZE, arySpiked);
       cl::Buffer bufferTestOut(context, CL_MEM_WRITE_ONLY, sizeof(aryTestOut)*DATA_SIZE, NULL);
@@ -178,61 +188,89 @@ void TestOpenCL::RunFastSpikingNeurons()
       // Set kernel arguments
       kernel.setArg(0, bufferVmIn);
       kernel.setArg(1, bufferVahp);
-      kernel.setArg(2, bufferRefrCount);
-      kernel.setArg(3, bufferSpiked);
-      kernel.setArg(4, bufferVmOut);
-      kernel.setArg(5, bufferTestOut);
+      kernel.setArg(2, bufferIinOn);
+      kernel.setArg(3, bufferRefrCount);
+      kernel.setArg(4, bufferSpiked);
+      kernel.setArg(5, bufferVmOut);
+      kernel.setArg(6, bufferTestOut);
 
       // Create queue and enqueue kernel-execution command
       cl::CommandQueue queue(context, devices[0]);
  
 	  queue.enqueueWriteBuffer(bufferVmIn, CL_TRUE, 0, sizeof(aryVmIn)*DATA_SIZE,  aryVmIn, NULL, NULL);
 	  queue.enqueueWriteBuffer(bufferVahp, CL_TRUE, 0, sizeof(aryVahp)*DATA_SIZE,  aryVahp, NULL, NULL);
+	  queue.enqueueWriteBuffer(bufferIinOn, CL_TRUE, 0, sizeof(aryIinOn)*DATA_SIZE,  aryIinOn, NULL, NULL);
+	  queue.enqueueWriteBuffer(bufferIinOff, CL_TRUE, 0, sizeof(aryIinOff)*DATA_SIZE,  aryIinOff, NULL, NULL);
 	  queue.enqueueWriteBuffer(bufferRefrCount, CL_TRUE, 0, sizeof(aryRefrCount)*DATA_SIZE,  aryRefrCount, NULL, NULL);
 	  queue.enqueueWriteBuffer(bufferSpiked, CL_TRUE, 0, sizeof(arySpiked)*DATA_SIZE,  arySpiked, NULL, NULL);
 
-	  for(int iTimeSlice=0; iTimeSlice<2; iTimeSlice++)
+	  CStdTimer timeSim;
+	  timeSim.StartTimer();
+
+	  for(int iTimeSlice=0; iTimeSlice<1000; iTimeSlice++)
 	  {
-		  printf("Iteration: %d\n", iTimeSlice);
+		  //printf("Iteration: %d\n", iTimeSlice);
+
+		  if(iTimeSlice == 800)
+			  queue.enqueueCopyBuffer(bufferIinOff, bufferIinOn, 0, 0, sizeof(aryIinOn)*DATA_SIZE, NULL, NULL);
 
 		  queue.enqueueNDRangeKernel(kernel, NULL, ndGlobal, ndLocal);
 
-		  queue.enqueueReadBuffer(bufferVmOut, CL_TRUE, 0, sizeof(aryVmOut)*DATA_SIZE,  aryVmOut, NULL, NULL);
-		  queue.enqueueReadBuffer(bufferTestOut, CL_TRUE, 0, sizeof(aryTestOut)*DATA_SIZE,  aryTestOut, NULL, NULL);
+		  //queue.enqueueReadBuffer(bufferVmOut, CL_TRUE, 0, sizeof(aryVmOut)*DATA_SIZE,  aryVmOut, NULL, NULL);
+		  //queue.enqueueReadBuffer(bufferTestOut, CL_TRUE, 0, sizeof(aryTestOut)*DATA_SIZE,  aryTestOut, NULL, NULL);
 
-		  // Display updated buffer
-		  for(i=0; i<10; i++) 
-		  {
-			  printf("%6.5f, %6.5f", aryVmOut[i], aryVmIn[i]);
-			  printf("\n");
-		  }
-		  printf("\n\n");
+		  //// Display updated buffer
+		  //for(i=0; i<10; i++) 
+		  //{
+			 // printf("%6.5f, %6.5f", aryVmOut[i], aryVmIn[i]);
+			 // printf("\n");
+		  //} 
+		  //printf("\n\n");
 
 		  queue.enqueueCopyBuffer(bufferVmOut, bufferVmIn, 0, 0, sizeof(aryVmOut)*DATA_SIZE, NULL, NULL);
 
 		  queue.enqueueReadBuffer(bufferVmIn, CL_TRUE, 0, sizeof(aryVmIn)*DATA_SIZE,  aryVmIn, NULL, NULL);
 
-		  // Display updated buffer
-		  for(i=0; i<10; i++) 
-		  {
-			  printf("%6.5f, %6.5f", aryVmOut[i], aryVmIn[i]);
-			  printf("\n");
-		  }
-		  printf("\n\n");
+		  aryData.push_back(aryVmIn[DATA_SIZE-1]);
+		  //// Display updated buffer
+		  //for(i=0; i<1; i++) 
+		  //{
+			 // printf("%6.5f, %6.5f", aryVmIn[i], aryTestOut[i]);
+			 // printf("\n");
+		  //}
+		  //printf("\n\n");
+
 
 	  }
 
-	 delete[] aryVmIn;
-	 delete[] aryVmOut;
-	 delete[] aryVahp;
-	 delete[] aryRefrCount;
-	 delete[] arySpiked;
-	 delete[] aryTestOut;
-   }
+		double dblTotalTime = timeSim.StopTimer();
+        std::cout << "Total Time: " << dblTotalTime << std::endl;   
+
+		SaveOutput(OUTPUT_FILE, aryData);
+
+		delete[] aryVmIn;
+		delete[] aryVmOut;
+		delete[] aryVahp;
+		delete[] aryRefrCount;
+		delete[] arySpiked;
+		delete[] aryTestOut;
+	}
    catch(cl::Error e) 
    {
       std::cout << e.what() << ": Error code " << e.err() << std::endl;   
    }
+}
+
+
+void TestOpenCL::SaveOutput(string strFilename, vector<float> &aryData)
+{
+	ofstream oStream;
+	oStream.open(strFilename.c_str());
+
+	for(int iRow=0; iRow< (int) aryData.size(); iRow++)
+		oStream << aryData[iRow] << "\n";
+
+	oStream.close();
 }
 
 }
