@@ -79,7 +79,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OPENNEURONCL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -92,7 +92,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OpenNeuronCL_vc10D.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)OpenNeuronCL.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -113,7 +113,7 @@ Copy "$(TargetPath)" ..\..\bin
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENNEURONCL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -125,7 +125,7 @@ Copy "$(TargetPath)" ..\..\bin
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OpenNeuronCL_vc10.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -147,7 +147,7 @@ Copy "$(TargetPath)" ..\..\bin
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUnoptimizedWithSymbols|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENNEURONCL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -159,7 +159,7 @@ Copy "$(TargetPath)" ..\..\bin
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OpenNeuronCL_vc10.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
