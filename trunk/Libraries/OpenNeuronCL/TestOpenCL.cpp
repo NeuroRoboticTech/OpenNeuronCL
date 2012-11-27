@@ -5,12 +5,19 @@
 
 #include <CL/cl.hpp>
 
-#define DATA_SIZE 4096
-#define LOCAL_SIZE 128
-
 
 namespace OpenNeuronCL
 {
+
+
+#pragma pack(push, 1)
+struct NeuronDataPacked 
+{
+    cl_float Vm[2];
+    cl_float Vahp;
+    cl_int RefrCountSpiked;
+};
+#pragma pack(pop)
 
 TestOpenCL::TestOpenCL(void)
 {
@@ -24,7 +31,8 @@ TestOpenCL::~TestOpenCL(void)
 void TestOpenCL::Run()
 {
 	//RunIDCheck();
-	RunFastSpikingNeurons();
+	//RunFastSpikingNeurons();
+	RunBufferTestNoStruct();
 }
 
 void TestOpenCL::RunIDCheck()
@@ -112,6 +120,8 @@ void TestOpenCL::RunFastSpikingNeurons()
    std::vector<cl::Device> devices;
    std::vector<float> aryData;
    int i;
+   int DATA_SIZE = 1024;
+   int LOCAL_SIZE = 1024;
 
    // Data
    cl::NDRange ndGlobal(DATA_SIZE);
@@ -272,5 +282,147 @@ void TestOpenCL::SaveOutput(string strFilename, vector<float> &aryData)
 
 	oStream.close();
 }
+
+void TestOpenCL::RunBufferTestWithStruct()
+{
+}
+
+void TestOpenCL::RunBufferTestNoStruct()
+{
+	string PROGRAM_FILE = "C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\Kernels\\BufferTestNoStruct.cl";
+	string KERNEL_FUNC = "BufferTestNoStruct";
+
+	std::vector<cl::Platform> platforms;
+	std::vector<cl::Device> devices;
+	std::vector<float> aryData;
+	int i;
+	int DATA_SIZE = 32;
+	int LOCAL_SIZE = 32;
+
+	// Data
+	cl::NDRange ndGlobal(DATA_SIZE);
+	cl::NDRange ndLocal(LOCAL_SIZE);
+
+	cl_float *aryVmIn, *aryVmOut;
+	cl_float *aryVahp, *aryIinOn, *aryIinOff, *aryTestOut;
+	cl_int *aryRefrCountSpiked;
+	
+	// std::cout << "Neuron Count: " << DATA_SIZE << std::endl;   
+
+	aryVmIn = new cl_float[DATA_SIZE];
+	aryVmOut = new cl_float[DATA_SIZE];
+	aryVahp = new cl_float[DATA_SIZE];
+	aryIinOn = new cl_float[DATA_SIZE];
+	aryIinOff = new cl_float[DATA_SIZE];
+	aryRefrCountSpiked = new cl_int[DATA_SIZE];
+	aryTestOut = new cl_float[DATA_SIZE];
+
+	try {
+		// Initialize data
+		for(i=0; i<DATA_SIZE; i++) {
+		aryVmIn[i] = 0.1f;
+		aryVahp[i] = i+0.2f;
+		aryIinOn[i] = i+0.3f;
+		aryIinOff[i] = i+0.4f;
+		aryRefrCountSpiked[i] = i;
+	}
+
+	// Place the GPU devices of the first platform into a context
+	cl::Platform::get(&platforms);
+	platforms[0].getDevices(CL_DEVICE_TYPE_GPU, &devices);
+	cl::Context context(devices);
+      
+	// Create kernel
+	std::ifstream programFile(PROGRAM_FILE);
+	std::string programString(std::istreambuf_iterator<char>(programFile),
+	(std::istreambuf_iterator<char>()));
+	cl::Program::Sources source(1, std::make_pair(programString.c_str(),
+	programString.length()+1));
+	cl::Program program(context, source);
+
+	//std::cout << "Program kernel: " << std::endl << programString << std::endl;
+
+	try
+	{
+		program.build(devices);
+	}
+	catch(cl::Error e)
+	{
+		std::cout << e.what() << ": Error code " << e.err() << std::endl;   
+		string buildlog;
+		program.getBuildInfo( devices[0], (cl_program_build_info)CL_PROGRAM_BUILD_LOG, &buildlog );
+		std::cout << "Error: " << buildlog << std::endl;   
+		throw e;
+	}
+
+	cl::Kernel kernel(program, KERNEL_FUNC.c_str());
+
+	int iSize = sizeof(aryVmOut);
+
+	// Create buffers
+	cl::Buffer bufferVmIn(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(aryVmIn)*DATA_SIZE, aryVmIn);
+	cl::Buffer bufferVmOut(context, CL_MEM_WRITE_ONLY, sizeof(aryVmOut)*DATA_SIZE, NULL);
+	cl::Buffer bufferVahp(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(aryVahp)*DATA_SIZE, aryVahp);
+	cl::Buffer bufferIinOn(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(aryIinOn)*DATA_SIZE, aryIinOn);
+	cl::Buffer bufferIinOff(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(aryIinOff)*DATA_SIZE, aryIinOff);
+	cl::Buffer bufferRefrCount(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(aryRefrCountSpiked)*DATA_SIZE, aryRefrCountSpiked);
+	cl::Buffer bufferTestOut(context, CL_MEM_WRITE_ONLY, sizeof(aryTestOut)*DATA_SIZE, NULL);
+
+	// Set kernel arguments
+	kernel.setArg(0, bufferVmIn);
+	kernel.setArg(1, bufferVahp);
+	kernel.setArg(2, bufferIinOn);
+	kernel.setArg(3, bufferRefrCount);
+	kernel.setArg(4, sizeof(aryVmIn)*DATA_SIZE, NULL);
+	kernel.setArg(5, sizeof(aryVahp)*DATA_SIZE, NULL);
+	kernel.setArg(6, sizeof(aryIinOn)*DATA_SIZE, NULL);
+	kernel.setArg(7, sizeof(aryRefrCountSpiked)*DATA_SIZE, NULL);
+	kernel.setArg(8, bufferVmOut);
+	kernel.setArg(9, bufferTestOut);
+
+   cl::Event profileEvent;
+
+	// Create queue and enqueue kernel-execution command
+	cl::CommandQueue queue(context, devices[0], CL_QUEUE_PROFILING_ENABLE);
+ 
+	queue.enqueueWriteBuffer(bufferVmIn, CL_TRUE, 0, sizeof(aryVmIn)*DATA_SIZE,  aryVmIn, NULL, NULL);
+	queue.enqueueWriteBuffer(bufferVahp, CL_TRUE, 0, sizeof(aryVahp)*DATA_SIZE,  aryVahp, NULL, NULL);
+	queue.enqueueWriteBuffer(bufferIinOn, CL_TRUE, 0, sizeof(aryIinOn)*DATA_SIZE,  aryIinOn, NULL, NULL);
+	queue.enqueueWriteBuffer(bufferIinOff, CL_TRUE, 0, sizeof(aryIinOff)*DATA_SIZE,  aryIinOff, NULL, NULL);
+	queue.enqueueWriteBuffer(bufferRefrCount, CL_TRUE, 0, sizeof(aryRefrCountSpiked)*DATA_SIZE,  aryRefrCountSpiked, NULL, NULL);
+
+	queue.enqueueNDRangeKernel(kernel, NULL, ndGlobal, ndLocal, NULL, &profileEvent);
+
+	queue.enqueueReadBuffer(bufferVmOut, CL_TRUE, 0, sizeof(aryVmOut)*DATA_SIZE,  aryVmOut, NULL, NULL);
+	queue.enqueueReadBuffer(bufferTestOut, CL_TRUE, 0, sizeof(aryTestOut)*DATA_SIZE,  aryTestOut, NULL, NULL);
+
+	// Configure event processing
+	cl_ulong time_start, time_end;
+	time_start = profileEvent.getProfilingInfo<CL_PROFILING_COMMAND_START>();
+	time_end = profileEvent.getProfilingInfo<CL_PROFILING_COMMAND_END>();
+	std::cout << "Start time: " << time_start << " ns." << std::endl;
+	std::cout << "  End time: " << time_end << " ns." << std::endl;
+	std::cout << "Elaps time: " << (time_end - time_start) << " ns." << std::endl;
+
+	// Display updated buffer
+	for(i=0; i<10; i++) 
+	{
+		 printf("%6.5f, %6.5f", aryVmOut[i], aryTestOut[i]);
+		 printf("\n");
+	} 
+	printf("\n\n");
+
+	delete[] aryVmIn;
+	delete[] aryVmOut;
+	delete[] aryVahp;
+	delete[] aryRefrCountSpiked;
+	delete[] aryTestOut;
+	}
+	catch(cl::Error e) 
+	{
+		std::cout << e.what() << ": Error code " << e.err() << std::endl;   
+	}
+}
+
 
 }

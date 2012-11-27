@@ -196,6 +196,8 @@ Copy "$(TargetPath)" ..\..\bin</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="Kernels\blank.cl" />
+    <None Include="Kernels\BufferTestNoStruct.cl" />
+    <None Include="Kernels\BufferTestWithStruct.cl" />
     <None Include="Kernels\FastSpikingNeuron.cl" />
     <None Include="Kernels\ID_Check.cl" />
   </ItemGroup>
