@@ -79,7 +79,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OPENNEURONCL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -92,7 +92,7 @@
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OpenNeuronCL_vc10D.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)OpenNeuronCL.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -113,7 +113,7 @@ Copy "$(TargetPath)" ..\..\bin
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENNEURONCL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -125,7 +125,7 @@ Copy "$(TargetPath)" ..\..\bin
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OpenNeuronCL_vc10.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -147,7 +147,7 @@ Copy "$(TargetPath)" ..\..\bin
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUnoptimizedWithSymbols|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;..\..\..\AnimatLabPublicSource\include;..\..\..\AnimatLabPublicSource\Libraries\StdUtils;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OPENNEURONCL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -159,7 +159,7 @@ Copy "$(TargetPath)" ..\..\bin
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)OpenNeuronCL_vc10.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CudaToolkitDir)/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/opencl/common/lib/$(Platform);$(NVSDKCOMPUTE_ROOT)/shared/lib/$(Platform);..\..\..\AnimatLabPublicSource\lib;$(BOOST_ROOT)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -179,6 +179,8 @@ Copy "$(TargetPath)" ..\..\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ONCL_ClassFactory.cpp" />
+    <ClCompile Include="FastSpikingNeuralModel.cpp" />
     <ClCompile Include="OpenNeuronCL.cpp" />
     <ClCompile Include="OpenNeuronCLUtils.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -189,8 +191,13 @@ Copy "$(TargetPath)" ..\..\bin</Command>
     <ClCompile Include="TestOpenCL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ONCL_ClassFactory.h" />
+    <ClInclude Include="FastSpikingNeuralModel.h" />
+    <ClInclude Include="INeuralModel.h" />
     <ClInclude Include="OpenNeuronCLIncludes.h" />
     <ClInclude Include="OpenNeuronCLUtils.h" />
+    <ClInclude Include="ONCL_Exceptions.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestOpenCL.h" />
   </ItemGroup>
@@ -200,6 +207,9 @@ Copy "$(TargetPath)" ..\..\bin</Command>
     <None Include="Kernels\BufferTestWithStruct.cl" />
     <None Include="Kernels\FastSpikingNeuron.cl" />
     <None Include="Kernels\ID_Check.cl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OpenNeuronCL.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

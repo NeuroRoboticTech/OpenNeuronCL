@@ -15,6 +15,7 @@ struct NeuronDataPacked
 {
     cl_float Vm[2];
     cl_float Vahp;
+	cl_float Iin;
     cl_int RefrCountSpiked;
 };
 #pragma pack(pop)
@@ -33,6 +34,7 @@ void TestOpenCL::Run()
 	//RunIDCheck();
 	//RunFastSpikingNeurons();
 	RunBufferTestNoStruct();
+	//RunBufferTestWithStruct();
 }
 
 void TestOpenCL::RunIDCheck()
@@ -285,6 +287,118 @@ void TestOpenCL::SaveOutput(string strFilename, vector<float> &aryData)
 
 void TestOpenCL::RunBufferTestWithStruct()
 {
+	string PROGRAM_FILE = "C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\Kernels\\BufferTestWithStruct.cl";
+	string KERNEL_FUNC = "BufferTestWithStruct";
+
+	std::vector<cl::Platform> platforms;
+	std::vector<cl::Device> devices;
+	std::vector<float> aryData;
+	int i;
+	int DATA_SIZE = 32;
+	int LOCAL_SIZE = 32;
+
+	// Data
+	cl::NDRange ndGlobal(DATA_SIZE);
+	cl::NDRange ndLocal(LOCAL_SIZE);
+
+	NeuronDataPacked *aryNeurons;
+	cl_float *aryVmOut, *aryTestOut;
+	
+	// std::cout << "Neuron Count: " << DATA_SIZE << std::endl;   
+
+	aryNeurons = new NeuronDataPacked[DATA_SIZE];
+	aryVmOut = new cl_float[DATA_SIZE];
+	aryTestOut = new cl_float[DATA_SIZE];
+
+	try {
+		// Initialize data
+		for(i=0; i<DATA_SIZE; i++) {
+		aryNeurons[i].Vm[0] = 0.1f;
+		aryNeurons[i].Vm[1] = 0.11f;
+		aryNeurons[i].Vahp = i+0.2f;
+		aryNeurons[i].Iin = i+0.3f;
+		aryNeurons[i].RefrCountSpiked = i;
+	}
+
+	// Place the GPU devices of the first platform into a context
+	cl::Platform::get(&platforms);
+	platforms[0].getDevices(CL_DEVICE_TYPE_GPU, &devices);
+	cl::Context context(devices);
+      
+	// Create kernel
+	std::ifstream programFile(PROGRAM_FILE);
+	std::string programString(std::istreambuf_iterator<char>(programFile),
+	(std::istreambuf_iterator<char>()));
+	cl::Program::Sources source(1, std::make_pair(programString.c_str(),
+	programString.length()+1));
+	cl::Program program(context, source);
+
+	//std::cout << "Program kernel: " << std::endl << programString << std::endl;
+
+	try
+	{
+		program.build(devices);
+	}
+	catch(cl::Error e)
+	{
+		std::cout << e.what() << ": Error code " << e.err() << std::endl;   
+		string buildlog;
+		program.getBuildInfo( devices[0], (cl_program_build_info)CL_PROGRAM_BUILD_LOG, &buildlog );
+		std::cout << "Error: " << buildlog << std::endl;   
+		throw e;
+	}
+
+	cl::Kernel kernel(program, KERNEL_FUNC.c_str());
+
+	int iSize = sizeof(aryNeurons);
+
+	// Create buffers
+	cl::Buffer bufferNeurons(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(aryNeurons)*DATA_SIZE, aryNeurons);
+	cl::Buffer bufferVmOut(context, CL_MEM_WRITE_ONLY, sizeof(aryVmOut)*DATA_SIZE, NULL);
+	cl::Buffer bufferTestOut(context, CL_MEM_WRITE_ONLY, sizeof(aryTestOut)*DATA_SIZE, NULL);
+
+	// Set kernel arguments
+	kernel.setArg(0, bufferNeurons);
+	kernel.setArg(1, sizeof(aryNeurons)*DATA_SIZE, NULL);
+	kernel.setArg(2, bufferVmOut);
+	kernel.setArg(3, bufferTestOut);
+
+   cl::Event profileEvent;
+
+	// Create queue and enqueue kernel-execution command
+	cl::CommandQueue queue(context, devices[0], CL_QUEUE_PROFILING_ENABLE);
+ 
+	queue.enqueueWriteBuffer(bufferNeurons, CL_TRUE, 0, sizeof(aryNeurons)*DATA_SIZE,  aryNeurons, NULL, NULL);
+
+	queue.enqueueNDRangeKernel(kernel, NULL, ndGlobal, ndLocal, NULL, &profileEvent);
+
+	queue.enqueueReadBuffer(bufferVmOut, CL_TRUE, 0, sizeof(aryVmOut)*DATA_SIZE,  aryVmOut, NULL, NULL);
+	queue.enqueueReadBuffer(bufferTestOut, CL_TRUE, 0, sizeof(aryTestOut)*DATA_SIZE,  aryTestOut, NULL, NULL);
+
+	// Configure event processing
+	cl_ulong time_start, time_end;
+	time_start = profileEvent.getProfilingInfo<CL_PROFILING_COMMAND_START>();
+	time_end = profileEvent.getProfilingInfo<CL_PROFILING_COMMAND_END>();
+	std::cout << "Start time: " << time_start << " ns." << std::endl;
+	std::cout << "  End time: " << time_end << " ns." << std::endl;
+	std::cout << "Elaps time: " << (time_end - time_start) << " ns." << std::endl;
+
+	// Display updated buffer
+	for(i=0; i<10; i++) 
+	{
+		 printf("%6.5f, %6.5f", aryVmOut[i], aryTestOut[i]);
+		 printf("\n");
+	} 
+	printf("\n\n");
+
+	delete[] aryNeurons;
+	delete[] aryVmOut;
+	delete[] aryTestOut;
+	}
+	catch(cl::Error e) 
+	{
+		std::cout << e.what() << ": Error code " << e.err() << std::endl;   
+	}
 }
 
 void TestOpenCL::RunBufferTestNoStruct()
