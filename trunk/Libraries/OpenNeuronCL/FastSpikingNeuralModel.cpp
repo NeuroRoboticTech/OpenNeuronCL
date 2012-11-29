@@ -18,7 +18,6 @@ FastSpikingNeuralModel::~FastSpikingNeuralModel(void)
 
 void FastSpikingNeuralModel::Simulate()
 {
-	int i=5;
 };
 
 	}

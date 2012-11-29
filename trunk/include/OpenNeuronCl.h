@@ -11,11 +11,7 @@
 
 #define OPENNEURONCL_PORT __declspec( dllimport )
 
-//Simulation Objects
-namespace OpenNeuronCL
-{
-	class TestOpenCL;
-}
+#pragma warning(disable: 4018 4244 4290 4786 4251 4275 4267 4311 4312 4800 4003 4482 4996 4251)
 
 #include <cstdio>
 #include <cstdlib>
@@ -50,9 +46,39 @@ namespace OpenNeuronCL
 #include <vfw.h>
 using namespace std;
 
+#include <boost/exception/all.hpp>
+#include <boost/throw_exception.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/shared_array.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/config.hpp>
+#include <boost/static_assert.hpp>
+#include <boost/bind.hpp>
 
-#include "TestOpenCL.h"
+//Simulation Objects
+namespace OpenNeuronCL
+{
+	class INeuralModel;
+	class ClassFactory;
+
+	namespace NeuralModels
+	{
+		class FastSpikingNeuralModel;
+	}
+
+	namespace Exceptions
+	{
+		class InvalidNeuronModelTypeException;
+	}
+}
 
 using namespace OpenNeuronCL;
+using namespace OpenNeuronCL::NeuralModels;
+using namespace OpenNeuronCL::Exceptions;
+
+#include "ONCL_Exceptions.h"
+#include "INeuralModel.h"
+#include "ONCL_ClassFactory.h"
+#include "OpenNeuronCLUtils.h"
 
 #endif // __OPEN_NEURON_CL_LIB_DLL_H__

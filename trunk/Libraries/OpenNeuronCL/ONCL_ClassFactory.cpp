@@ -9,27 +9,9 @@
 namespace OpenNeuronCL
 {
 	
-ONCL_ClassFactory::ONCL_ClassFactory(void)
+ClassFactory::ClassFactory(void)
 {
+	map["FastSpikingNeuralModel"] = boost::bind(&FastSpikingNeuralModel::Create);
 }
-
-
-ONCL_ClassFactory::~ONCL_ClassFactory(void)
-{
-}
-
-boost::shared_ptr<INeuralModel> ONCL_ClassFactory::CreateNeuralModel(string strType, BOOL bThrowError)
-{
-	boost::shared_ptr<INeuralModel> ptr;
-	boost::to_upper(strType);
-
-	if(strType == "FASTSPIKINGNEURALMODEL")
-		ptr = boost::shared_ptr<INeuralModel>(new FastSpikingNeuralModel);
-	else if(bThrowError)
-		BOOST_THROW_EXCEPTION(InvalidNeuronModelTypeException("Neural Model Type", strType)); 
-	
-	return ptr;
-}
-
 
 }

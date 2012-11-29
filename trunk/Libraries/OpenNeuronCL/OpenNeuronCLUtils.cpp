@@ -4,5 +4,4 @@
 namespace OpenNeuronCL
 {
 	
-
 }			//OpenNeuronCL
