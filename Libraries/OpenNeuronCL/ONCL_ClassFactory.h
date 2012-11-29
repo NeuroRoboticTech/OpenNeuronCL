@@ -3,13 +3,20 @@
 namespace OpenNeuronCL
 {
 
-	class OPENNEURONCL_PORT ONCL_ClassFactory
-	{
-	public:
-		ONCL_ClassFactory(void);
-		virtual ~ONCL_ClassFactory(void);
+class OPENNEURONCL_PORT ClassFactory {
+    public:
+		static INeuralModel* GetInstance(string strType)
+		{
+			ClassFactory factory;
+			return factory.map[strType]();
+		}
 
-		static boost::shared_ptr<INeuralModel> CreateNeuralModel(string strType, BOOL bThrowError = TRUE);
-	};
+        typedef boost::function< INeuralModel*() > INeuralModel_fact;
+
+    private:
+        ClassFactory(); 
+
+        std::map<std::string, INeuralModel_fact>   map;
+    };
 
 }

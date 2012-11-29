@@ -11,6 +11,7 @@ namespace OpenNeuronCL
 			virtual ~FastSpikingNeuralModel(void);
 
 			virtual void Simulate(); 
+			static INeuralModel *Create() {return new FastSpikingNeuralModel;};
 		};
 
 	}

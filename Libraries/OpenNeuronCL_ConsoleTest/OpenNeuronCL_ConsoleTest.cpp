@@ -5,9 +5,23 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	OpenNeuronCL::TestOpenCL test;
+	//boost::shared_ptr<ONCL_ClassFactory> factory(ONCL_ClassFactory::GetInstance());
 
-	test.Run();
+	//INeuralModel *lpNeuralModel = ONCL_ClassFactory::GetInstance("FastSpikingNeuralModel");
+	boost::shared_ptr<INeuralModel> lpNeuralModel( OpenNeuronCL::ClassFactory::GetInstance("FastSpikingNeuralModel") );
+	lpNeuralModel->Simulate();
+
+	//factory<INeuralModel*()> factory;
+	//InitializeClassFactory(factory);
+
+	////std::auto_ptr<INeuralModel> a1( factory["FastSpikingNeuralModel"]() );
+
+	//boost::shared_ptr<INeuralModel> lpNeuralModel( factory["FastSpikingNeuralModel"] );
+	//lpNeuralModel->Simulate();
+
+	//OpenNeuronCL::TestOpenCL test;
+
+	//test.Run();
 	 
 	return 0;
 }
