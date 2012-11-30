@@ -8,11 +8,11 @@ namespace OpenNeuronCL
 	namespace Exceptions
 	{
 
-		class InvalidNeuronModelTypeException : public std::exception 
+		class OpenNeuronCLException : public std::exception 
 		{ 
 		public: 
-		  InvalidNeuronModelTypeException(string strTypeName, string strTypeValue) 
-			: what_("Invalid neuron model was specified. " + strTypeName + ": " + strTypeValue) 
+		  OpenNeuronCLException(string strErrorText) 
+			: what_(strErrorText) 
 		  { 
 		  } 
 
@@ -21,8 +21,23 @@ namespace OpenNeuronCL
 			return what_.c_str(); 
 		  } 
 
-		private: 
+		protected: 
 		  std::string what_; 
 		}; 
+
+		class InvalidNeuronModelTypeException : public OpenNeuronCLException
+		{ 
+		public: 
+		  InvalidNeuronModelTypeException(string strTypeName, string strTypeValue) 
+			: OpenNeuronCLException("Invalid neuron model was specified. " + strTypeName + ": " + strTypeValue) {} 
+		}; 
+
+		class InvalidParamValueException : public OpenNeuronCLException
+		{ 
+		public: 
+		  InvalidParamValueException(string strClassName, string strParamName, string strParamValue, string strParamRange) 
+			: OpenNeuronCLException("Invalid parameter value set for " + strClassName + "::" + strParamName + ". Value: " + strParamValue + ", Valid range: " + strParamRange) {} 
+		}; 
+
 	}
 }

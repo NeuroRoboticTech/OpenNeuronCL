@@ -20,5 +20,9 @@ boost::shared_ptr<INeuralModel> NervousSystem::AddNeuralModel(string strType)
 	return lpModel;
 }
 
+void NervousSystem::RemoveNeuralModel(int iID) 
+{
+}
+
 
 }
