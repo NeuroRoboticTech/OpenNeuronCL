@@ -19,6 +19,10 @@
 #include <boost/static_assert.hpp>
 #include <boost/bind.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
+#include <boost/lexical_cast.hpp> 
+#include <boost/multi_index_container.hpp>
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/ordered_index.hpp>
 
 //Simulation Objects
 namespace OpenNeuronCL

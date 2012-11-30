@@ -5,9 +5,15 @@
 
 void Test()
 {
-	boost::shared_ptr<INeuralModel> lpNeuralModel = OpenNeuronCL::ClassFactory::GetNeuralModelInstance("FastSpikingNeuralModel");
-	boost::shared_ptr<INeuralModel> lpNeuralModel2 = OpenNeuronCL::ClassFactory::GetNeuralModelInstance("FastSpikingNeuralModel");
-	lpNeuralModel->Simulate();
+	boost::shared_ptr<INervousSystem> lpNervousSystem = OpenNeuronCL::ClassFactory::GetNervousSystemInstance("NervousSystem");
+
+	boost::shared_ptr<INeuralModel> lpFastSpikingModel = lpNervousSystem->AddNeuralModel("FastSpikingNeuralModel");
+
+	lpFastSpikingModel->TimeStep(0.02);
+
+	lpNervousSystem->Initialize();
+
+	lpNervousSystem->Simulate();
 
 }
 
