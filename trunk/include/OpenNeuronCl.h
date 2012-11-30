@@ -44,6 +44,7 @@
 #include <string.h>
 #include <wtypes.h>
 #include <vfw.h>
+
 using namespace std;
 
 #include <boost/exception/all.hpp>

@@ -18,6 +18,7 @@
 #include <boost/config.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/bind.hpp>
+#include <boost/interprocess/detail/atomic.hpp>
 
 //Simulation Objects
 namespace OpenNeuronCL

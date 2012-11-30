@@ -10,7 +10,7 @@ namespace OpenNeuronCL
 		IOpenNeuronCLBase(void)	{}
 		virtual ~IOpenNeuronCLBase(void) {};
 
-		virtual unsigned long ID() = 0;
+		virtual unsigned int ID() = 0;
 
 	};
 
