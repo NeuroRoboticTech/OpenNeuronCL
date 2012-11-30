@@ -3,16 +3,15 @@
 namespace OpenNeuronCL
 {
 
-	class OpenNeuronCLBase : public IOpenNeuronCLBase
+	class OpenNeuronCLBase
 	{
 		protected:
-			string m_strID;
+			unsigned long m_lID;
 
 		public:
 			OpenNeuronCLBase(void);
 			virtual ~OpenNeuronCLBase(void);
 
-			virtual string ID() {return m_strID;};
 	};
 
 }

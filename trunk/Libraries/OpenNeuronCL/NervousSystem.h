@@ -15,6 +15,8 @@ namespace OpenNeuronCL
 		NervousSystem(void);
 		virtual ~NervousSystem(void);
 
+		virtual unsigned long ID() {return m_lID;};
+
 		virtual std::vector< boost::shared_ptr<INeuralModel> > &NeuralModels() {return m_aryNeuralModels;};
 
 		virtual boost::shared_ptr<INeuralModel> AddNeuralModel(string strType);

@@ -6,7 +6,6 @@ namespace OpenNeuronCL
 
 NeuralModel::NeuralModel(void)
 {
-	m_strID = "";
 }
 
 

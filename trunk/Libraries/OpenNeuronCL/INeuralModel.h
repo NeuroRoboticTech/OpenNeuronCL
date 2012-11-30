@@ -3,7 +3,7 @@
 namespace OpenNeuronCL
 {
 
-	class OPENNEURONCL_PORT INeuralModel
+	class OPENNEURONCL_PORT INeuralModel : public IOpenNeuronCLBase
 	{
 	public:
 		INeuralModel(void) {};
