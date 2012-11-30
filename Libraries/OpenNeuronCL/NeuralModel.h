@@ -12,7 +12,7 @@ namespace OpenNeuronCL
 		NeuralModel(void);
 		virtual ~NeuralModel(void);
 
-		virtual unsigned long ID() {return m_lID;};
+		virtual unsigned int ID() {return m_iID;};
 
 	};
 

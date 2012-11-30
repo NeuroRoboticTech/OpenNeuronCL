@@ -3,6 +3,6 @@
 namespace OpenNeuronCL
 {
 
-	std::string OPENNEURONCL_PORT GenerateGUID();
+	unsigned int OPENNEURONCL_PORT GenerateID();
 
 }			//OpenNeuronCL

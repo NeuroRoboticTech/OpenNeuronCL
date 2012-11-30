@@ -6,6 +6,7 @@
 void Test()
 {
 	boost::shared_ptr<INeuralModel> lpNeuralModel = OpenNeuronCL::ClassFactory::GetNeuralModelInstance("FastSpikingNeuralModel");
+	boost::shared_ptr<INeuralModel> lpNeuralModel2 = OpenNeuronCL::ClassFactory::GetNeuralModelInstance("FastSpikingNeuralModel");
 	lpNeuralModel->Simulate();
 
 }
