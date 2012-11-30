@@ -179,9 +179,12 @@ Copy "$(TargetPath)" ..\..\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="NervousSystem.cpp" />
+    <ClCompile Include="NeuralModel.cpp" />
     <ClCompile Include="ONCL_ClassFactory.cpp" />
     <ClCompile Include="FastSpikingNeuralModel.cpp" />
     <ClCompile Include="OpenNeuronCL.cpp" />
+    <ClCompile Include="OpenNeuronCLBase.cpp" />
     <ClCompile Include="OpenNeuronCLUtils.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -191,9 +194,14 @@ Copy "$(TargetPath)" ..\..\bin</Command>
     <ClCompile Include="TestOpenCL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="INervousSystem.h" />
+    <ClInclude Include="IOpenNeuronCLBase.h" />
+    <ClInclude Include="NervousSystem.h" />
+    <ClInclude Include="NeuralModel.h" />
     <ClInclude Include="ONCL_ClassFactory.h" />
     <ClInclude Include="FastSpikingNeuralModel.h" />
     <ClInclude Include="INeuralModel.h" />
+    <ClInclude Include="OpenNeuronCLBase.h" />
     <ClInclude Include="OpenNeuronCLIncludes.h" />
     <ClInclude Include="OpenNeuronCLUtils.h" />
     <ClInclude Include="ONCL_Exceptions.h" />

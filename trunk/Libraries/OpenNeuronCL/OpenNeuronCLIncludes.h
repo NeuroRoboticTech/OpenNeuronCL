@@ -5,6 +5,9 @@
 
 #pragma warning(disable: 4018 4244 4290 4786 4251 4275 4267 4311 4312 4800 4003 4482 4996 4251)
 
+#define __CL_ENABLE_EXCEPTIONS
+#include <CL/cl.hpp>
+
 #include "OpenNeuronCLConstants.h"
 
 #include <boost/exception/all.hpp>
@@ -19,8 +22,13 @@
 //Simulation Objects
 namespace OpenNeuronCL
 {
+	class IOpenNeuronCLBase;
+	class INervousSystem;
 	class INeuralModel;
 	class ClassFactory;
+	class OpenNeuronCLBase;
+	class NervousSystem;
+	class NeuralModel;
 
 	namespace NeuralModels
 	{
@@ -34,7 +42,11 @@ namespace OpenNeuronCL
 }
 
 #include "ONCL_Exceptions.h"
+#include "IOpenNeuronCLBase.h"
+#include "INervousSystem.h"
 #include "INeuralModel.h"
+#include "OpenNeuronCLBase.h"
+#include "ONCL_ClassFactory.h"
 
 using namespace OpenNeuronCL;
 using namespace OpenNeuronCL::NeuralModels;
