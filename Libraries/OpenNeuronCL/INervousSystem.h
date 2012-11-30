@@ -3,7 +3,7 @@
 namespace OpenNeuronCL
 {
 
-	class OPENNEURONCL_PORT INervousSystem
+	class OPENNEURONCL_PORT INervousSystem : public IOpenNeuronCLBase
 	{
 	public:
 

@@ -4,7 +4,7 @@
 namespace OpenNeuronCL
 {
 
-OpenNeuronCLBase::OpenNeuronCLBase(void)
+OpenNeuronCLBase::OpenNeuronCLBase(void) : m_lID(0)
 {
 }
 
