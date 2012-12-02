@@ -8,10 +8,15 @@ namespace OpenNeuronCL
 	class NervousSystem : public OpenNeuronCLBase, public INervousSystem
 	{
 	protected:
-		std::map<cl::Platform> m_aryPlatforms;
-		std::vector<cl::Device> m_aryDevices;
+		//std::map<cl::Platform> m_aryPlatforms;
+		//std::vector<cl::Device> m_aryDevices;
 
-		std::vector< boost::shared_ptr<INeuralModel> > m_aryNeuralModels;
+		std::vector<shared_ptr<INeuralModel> > m_aryNeuralModels;
+
+		shared_ptr<NervousSystem> shared_from_this()
+		{
+			return static_pointer_cast<NervousSystem>(INervousSystem::shared_from_this());
+		}
 
 	public:
 		NervousSystem(void);
@@ -19,17 +24,20 @@ namespace OpenNeuronCL
 
 		virtual unsigned int ID() {return m_iID;};
 
-		virtual std::vector< boost::shared_ptr<INeuralModel> > NeuralModels() {return m_aryNeuralModels;};
-		virtual boost::shared_ptr<INeuralModel> AddNeuralModel(string strType);
-		virtual void RemoveNeuralModel(int iID) {};
+		virtual std::vector<shared_ptr<INeuralModel> > NeuralModels() {return m_aryNeuralModels;};
+		virtual shared_ptr<INeuralModel> AddNeuralModel(string strType, double dblDT);
+		virtual void RemoveNeuralModel(int iID);
 
-		virtual void Initialize() = 0;
-		virtual void StepSimulation() = 0;
-		virtual void RunSimulation(double dblTime) = 0;
+		virtual void Initialize();
+		virtual void StepSimulation();
+		virtual void RunSimulation(double dblTime);
 
+		static shared_ptr<INervousSystem>Create() 
+		{
+			shared_ptr<INervousSystem> lpNS(new NervousSystem);
+			return lpNS;
+		};
 
-
-		static INervousSystem *Create() {return new NervousSystem;};
 		static IOpenNeuronCLBase *CreateBase() {return new NervousSystem;};
 	};
 

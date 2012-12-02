@@ -7,12 +7,11 @@ namespace OpenNeuronCL
 		class FastSpikingNeuralModel : public NeuralModel
 		{
 		public:
-			FastSpikingNeuralModel(void);
+			FastSpikingNeuralModel(shared_ptr<INervousSystem> lpNS, double dblDT);
 			virtual ~FastSpikingNeuralModel(void);
 
 			virtual void Simulate(); 
-			static INeuralModel *Create() {return new FastSpikingNeuralModel;};
-			static IOpenNeuronCLBase *CreateBase() {return new FastSpikingNeuralModel;};
+			static INeuralModel *Create(shared_ptr<INervousSystem> lpNS, double dblDT) {return new FastSpikingNeuralModel(lpNS, dblDT);};
 		};
 
 	}

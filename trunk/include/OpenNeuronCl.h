@@ -51,6 +51,7 @@ using namespace std;
 #include <boost/throw_exception.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
+#include <boost/weak_ptr.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/config.hpp>
 #include <boost/static_assert.hpp>
@@ -59,6 +60,7 @@ using namespace std;
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
+#include <boost/foreach.hpp>
 
 //Simulation Objects
 namespace OpenNeuronCL
