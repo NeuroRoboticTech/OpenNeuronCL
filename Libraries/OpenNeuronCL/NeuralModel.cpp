@@ -4,15 +4,16 @@
 namespace OpenNeuronCL
 {
 
-NeuralModel::NeuralModel(void) : m_dblTimeStep(0)
+NeuralModel::NeuralModel(shared_ptr<INervousSystem> lpNS, double dblDT) : m_lpNervousSystem(lpNS), INeuralModel(lpNS, dblDT)
 {
+	TimeStep(dblDT);
 }
 
 
 NeuralModel::~NeuralModel(void)
-{
+{		
+	int i = 5;
 }
-
 
 void NeuralModel::TimeStep(double dblDt)
 {

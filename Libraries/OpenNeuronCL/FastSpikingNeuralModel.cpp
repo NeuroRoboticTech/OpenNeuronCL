@@ -7,7 +7,9 @@ namespace OpenNeuronCL
 	namespace NeuralModels
 	{
 
-FastSpikingNeuralModel::FastSpikingNeuralModel(void) {}
+FastSpikingNeuralModel::FastSpikingNeuralModel(shared_ptr<INervousSystem> lpNS, double dblDT) : 
+	NeuralModel(lpNS, dblDT)
+{}
 
 FastSpikingNeuralModel::~FastSpikingNeuralModel(void) 
 {
