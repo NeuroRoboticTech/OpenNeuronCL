@@ -1,11 +1,8 @@
 #include "StdAfx.h"
-#include "NeuralModel.h"
-#include "FastSpikingNeuralModel.h"
 #include "NervousSystem.h"
-
-#define __CL_ENABLE_EXCEPTIONS
-
-#include <CL/cl.hpp>
+#include "NeuralModel.h"
+#include "Kernel.h"
+#include "FastSpikingNeuralModel.h"
 
 namespace OpenNeuronCL
 {
@@ -20,25 +17,41 @@ ClassFactory::ClassFactory(void)
 	NervousSystemMap["NervousSystem"] = boost::bind(&NervousSystem::Create);
 
 	//Fill in neural model map
-	//NeuralModelMap["FastSpikingNeuralModel"] = boost::bind(&FastSpikingNeuralModel::Create);
+	NeuralModelMap["FastSpikingNeuralModel"] = boost::bind(&FastSpikingNeuralModel::Create, _1, _2);
+
+	//Fill in kernel map
+	KernelMap["Kernel"] = boost::bind(&Kernel::Create, _1, _2, _3, _4);
 }
 
 shared_ptr<INervousSystem> ClassFactory::GetNervousSystemInstance(string strType)
 {
 	ClassFactory factory;
-	//shared_ptr<INervousSystem> lpNervousSys(NervousSystem::Create()); //factory.NervousSystemMap[strType]());
 	return factory.NervousSystemMap[strType]();
 }
 
-
-void ClassFactory::Test()
+shared_ptr<INeuralModel> ClassFactory::GetNeuralModelInstance(string strType, INervousSystem *lpNS, double dblDT)
 {
-	//shared_ptr<INervousSystem> lpNS(new NervousSystem);
-	shared_ptr<INervousSystem> lpNS = GetNervousSystemInstance("NervousSystem");
-
-	shared_ptr<INeuralModel> lpModel = lpNS->AddNeuralModel("FastSPikingNeuralModel", 0.02);
-
+	ClassFactory factory;
+	shared_ptr<INeuralModel> lpModel(factory.NeuralModelMap[strType](lpNS, dblDT));
+	return lpModel;
 }
+
+shared_ptr<IKernel> ClassFactory::GetKernelInstance(string strType, INervousSystem *lpNS, INeuralModel *lpModel, string strKernelSource, string strKernelName)
+{
+	ClassFactory factory;
+	shared_ptr<IKernel> lpKernel(factory.KernelMap[strType](lpNS, lpModel, strKernelSource, strKernelName));
+	return lpKernel;
+}
+
+//
+//void ClassFactory::Test()
+//{
+//	//shared_ptr<INervousSystem> lpNS(new NervousSystem);
+//	shared_ptr<INervousSystem> lpNS = GetNervousSystemInstance("NervousSystem");
+//
+//	shared_ptr<INeuralModel> lpModel = lpNS->AddNeuralModel("FastSPikingNeuralModel", 0.02);
+//
+//}
 
 
 }

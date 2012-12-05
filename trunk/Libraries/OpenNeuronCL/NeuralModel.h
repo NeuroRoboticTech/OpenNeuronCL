@@ -2,26 +2,46 @@
 
 namespace OpenNeuronCL
 {
-
-	class NeuralModel : public OpenNeuronCLBase, public INeuralModel, public enable_shared_from_this<INeuralModel>
+	class NeuralModel : public OpenNeuronCLBase, public INeuralModel
 	{
 	protected:
-		weak_ptr<INervousSystem> m_lpNervousSystem;
-		double m_dblTimeStep;
+		NervousSystem *m_lpNervousSystem;
+		short m_iTimeStepInterval;
+		short m_iTimeStepCount;
+		float m_fltTimeStep;
+		vector< shared_ptr<IKernel> > m_aryKernels;
 
-		//cl::Context context(devices);
+		int m_iGlobalDataSize;
+		int m_iLocalDataSize;
+
+		virtual void InitializeKernels();
+		virtual void SetupInitialMemory() = 0;
+
+		virtual void StepModel() = 0;
 
 	public:
-		NeuralModel(shared_ptr<INervousSystem> lpNS, double dblDT);
+		NeuralModel(INervousSystem *lpNS, double dblDT);
 		virtual ~NeuralModel(void);
 
 		virtual unsigned int ID() {return m_iID;};
 
-		virtual weak_ptr<INervousSystem> NervousSystem() {return m_lpNervousSystem;}; 
+		virtual NervousSystem *NervousSystem() {return m_lpNervousSystem;}; 
 
-		virtual double TimeStep() {return m_dblTimeStep;};
-		virtual void TimeStep(double dblDt);
+		virtual void TimeStepInterval(short iVal);
+		virtual short TimeStepInterval();
 
+		virtual short TimeStepCount() {return m_iTimeStepCount;};
+		virtual void ResetStepCounter();
+
+		virtual float TimeStep() {return m_fltTimeStep;};
+		virtual void TimeStep(float fltDt);
+
+		virtual std::vector< shared_ptr<IKernel> > Kernels() {return m_aryKernels;};
+		virtual shared_ptr<IKernel> AddKernel(string strKernelSource, string strKernelName);
+		virtual void RemoveKernel(int iID);
+
+		virtual bool NeedToStep(bool bIncrement);
+		virtual void StepSimulation();
 	};
 
 }

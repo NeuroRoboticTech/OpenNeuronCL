@@ -5,17 +5,16 @@
 
 void Test()
 {
-	OpenNeuronCL::ClassFactory::Test();
+	//OpenNeuronCL::ClassFactory::Test();
 
-	//shared_ptr<INervousSystem> lpNervousSystem = OpenNeuronCL::ClassFactory::GetNervousSystemInstance("NervousSystem");
+	shared_ptr<INervousSystem> lpNervousSystem = OpenNeuronCL::ClassFactory::GetNervousSystemInstance("NervousSystem");
 
-	//shared_ptr<INeuralModel> lpFastSpikingModel = lpNervousSystem->AddNeuralModel("FastSpikingNeuralModel", 0.02);
+	shared_ptr<INeuralModel> lpFastSpikingModel = lpNervousSystem->AddNeuralModel("FastSpikingNeuralModel", 0.02);
 
-	//lpFastSpikingModel->TimeStep(0.02);
+	lpNervousSystem->Initialize();
 
-	//lpNervousSystem->Initialize();
-
-	//lpNervousSystem->Simulate();
+	for(int i=0; i<10; i++)
+		lpNervousSystem->StepSimulation();
 
 }
 

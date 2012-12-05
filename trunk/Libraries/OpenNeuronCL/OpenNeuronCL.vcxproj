@@ -179,6 +179,7 @@ Copy "$(TargetPath)" ..\..\bin</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Kernel.cpp" />
     <ClCompile Include="NervousSystem.cpp" />
     <ClCompile Include="NeuralModel.cpp" />
     <ClCompile Include="ONCL_ClassFactory.cpp" />
@@ -194,8 +195,11 @@ Copy "$(TargetPath)" ..\..\bin</Command>
     <ClCompile Include="TestOpenCL.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="IKernel.h" />
     <ClInclude Include="INervousSystem.h" />
     <ClInclude Include="IOpenNeuronCLBase.h" />
+    <ClInclude Include="ISimulationObject.h" />
+    <ClInclude Include="Kernel.h" />
     <ClInclude Include="NervousSystem.h" />
     <ClInclude Include="NeuralModel.h" />
     <ClInclude Include="ONCL_ClassFactory.h" />
