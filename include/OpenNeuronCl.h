@@ -66,8 +66,10 @@ using namespace std;
 namespace OpenNeuronCL
 {
 	class IOpenNeuronCLBase;
+	class ISimulationObject;
 	class INervousSystem;
 	class INeuralModel;
+	class IKernel;
 	class ClassFactory;
 
 	namespace Exceptions
@@ -81,8 +83,10 @@ using namespace OpenNeuronCL::Exceptions;
 
 #include "ONCL_Exceptions.h"
 #include "IOpenNeuronCLBase.h"
+#include "ISimulationObject.h"
 #include "INervousSystem.h"
 #include "INeuralModel.h"
+#include "IKernel.h"
 #include "ONCL_ClassFactory.h"
 #include "OpenNeuronCLUtils.h"
 

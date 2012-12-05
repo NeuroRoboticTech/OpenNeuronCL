@@ -1,11 +1,6 @@
 #include "StdAfx.h"
 #include "TestOpenCL.h"
 
-#define __CL_ENABLE_EXCEPTIONS
-
-#include <CL/cl.hpp>
-
-
 namespace OpenNeuronCL
 {
 

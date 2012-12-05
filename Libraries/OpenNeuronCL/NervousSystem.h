@@ -3,26 +3,38 @@
 namespace OpenNeuronCL
 {
 
-
-
 	class NervousSystem : public OpenNeuronCLBase, public INervousSystem
 	{
 	protected:
-		//std::map<cl::Platform> m_aryPlatforms;
-		//std::vector<cl::Device> m_aryDevices;
+		long m_lTimeSlice;
+		float m_fltMinTimeStep;
+
+		std::vector<cl::Platform> m_aryPlatforms;
+		std::vector<cl::Device> m_aryDevices;
+		shared_ptr<cl::Context> m_Context;
+		std::map< int, shared_ptr<cl::CommandQueue> > m_aryQueues;
 
 		std::vector<shared_ptr<INeuralModel> > m_aryNeuralModels;
 
-		shared_ptr<NervousSystem> shared_from_this()
-		{
-			return static_pointer_cast<NervousSystem>(INervousSystem::shared_from_this());
-		}
+		virtual void CreateContext();
 
 	public:
 		NervousSystem(void);
 		virtual ~NervousSystem(void);
 
 		virtual unsigned int ID() {return m_iID;};
+
+		virtual void TimeSlice(long lSlice) {m_lTimeSlice = lSlice;};
+		virtual long TimeSlice() {return m_lTimeSlice;};
+
+		virtual float MinTimeStep() {return m_fltMinTimeStep;};
+
+		virtual void RecalculateMinTimeStep();
+
+		virtual std::vector<cl::Platform> ActivePlatforms(INeuralModel *lpModel) {return m_aryPlatforms;};
+		virtual std::vector<cl::Device> ActiveDevices(INeuralModel *lpModel) {return m_aryDevices;};
+		virtual cl::Context &ActiveContext() {return *(m_Context.get());};
+		virtual shared_ptr< cl::CommandQueue > QueueForDevice(int iDeviceIdx);  
 
 		virtual std::vector<shared_ptr<INeuralModel> > NeuralModels() {return m_aryNeuralModels;};
 		virtual shared_ptr<INeuralModel> AddNeuralModel(string strType, double dblDT);
@@ -37,8 +49,6 @@ namespace OpenNeuronCL
 			shared_ptr<INervousSystem> lpNS(new NervousSystem);
 			return lpNS;
 		};
-
-		static IOpenNeuronCLBase *CreateBase() {return new NervousSystem;};
 	};
 
 }

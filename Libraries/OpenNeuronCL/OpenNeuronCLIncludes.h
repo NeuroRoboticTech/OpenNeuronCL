@@ -6,7 +6,7 @@
 #pragma warning(disable: 4018 4244 4290 4786 4251 4275 4267 4311 4312 4800 4003 4482 4996 4251)
 
 #define __CL_ENABLE_EXCEPTIONS
-#include <CL/cl.hpp>
+#include <ncl.hpp>
 
 #include "OpenNeuronCLConstants.h"
 
@@ -30,12 +30,15 @@
 namespace OpenNeuronCL
 {
 	class IOpenNeuronCLBase;
+	class ISimulationObject;
 	class INervousSystem;
 	class INeuralModel;
+	class IKernel;
 	class ClassFactory;
 	class OpenNeuronCLBase;
 	class NervousSystem;
 	class NeuralModel;
+	class Kernel;
 
 	namespace NeuralModels
 	{
@@ -50,9 +53,13 @@ namespace OpenNeuronCL
 
 #include "ONCL_Exceptions.h"
 #include "IOpenNeuronCLBase.h"
+#include "ISimulationObject.h"
 #include "INervousSystem.h"
 #include "INeuralModel.h"
+#include "IKernel.h"
 #include "OpenNeuronCLBase.h"
+#include "NervousSystem.h"
+#include "NeuralModel.h"
 #include "ONCL_ClassFactory.h"
 
 using namespace OpenNeuronCL;
