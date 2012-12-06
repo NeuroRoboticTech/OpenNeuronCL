@@ -9,12 +9,14 @@ void Test()
 
 	shared_ptr<INervousSystem> lpNervousSystem = OpenNeuronCL::ClassFactory::GetNervousSystemInstance("NervousSystem");
 
-	shared_ptr<INeuralModel> lpFastSpikingModel = lpNervousSystem->AddNeuralModel("FastSpikingNeuralModel", 0.02);
+	shared_ptr<INeuralModel> lpFastSpikingModel = lpNervousSystem->AddNeuralModel("FastSpikingNeuralModel", 0.0002);
 
 	lpNervousSystem->Initialize();
 
-	for(int i=0; i<10; i++)
-		lpNervousSystem->StepSimulation();
+	//for(int i=0; i<10; i++)
+	//	lpNervousSystem->StepSimulation();
+
+	lpNervousSystem->RunSimulation(0.2f);
 
 }
 

@@ -17,7 +17,7 @@ namespace OpenNeuronCL
 			//Fast Spiking Data
 			cl_float *m_aryVmIn, *m_aryVmOut;
 			cl_float *m_aryVahp, *m_aryIinOn, *m_aryIinOff, *m_aryTestOut;
-			cl_uchar *m_aryRefrCount, *m_arySpiked;
+			cl_int *m_aryRefrCount; //, *m_arySpiked;
 
 			shared_ptr< cl::Buffer > m_bufferVmIn, m_bufferVmOut, m_bufferVahp;
 			shared_ptr< cl::Buffer > m_bufferIinOn, m_bufferIinOff, m_bufferRefrCount; 

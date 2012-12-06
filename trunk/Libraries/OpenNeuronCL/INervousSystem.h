@@ -23,7 +23,7 @@ namespace OpenNeuronCL
 
 		virtual void Initialize() = 0;
 		virtual void StepSimulation() = 0;
-		virtual void RunSimulation(double dblTime) = 0;
+		virtual double RunSimulation(float fltTime) = 0;
 	};
 
 }

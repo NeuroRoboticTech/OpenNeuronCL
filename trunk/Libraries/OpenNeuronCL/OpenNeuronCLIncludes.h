@@ -51,6 +51,8 @@ namespace OpenNeuronCL
 	}
 }
 
+#include <windows.h>
+#include "ONCL_Timer.h"
 #include "ONCL_Exceptions.h"
 #include "IOpenNeuronCLBase.h"
 #include "ISimulationObject.h"
