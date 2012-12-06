@@ -211,8 +211,8 @@ void TestOpenCL::RunFastSpikingNeurons()
 	  queue.enqueueWriteBuffer(bufferRefrCount, CL_TRUE, 0, sizeof(aryRefrCount)*DATA_SIZE,  aryRefrCount, NULL, NULL);
 	  queue.enqueueWriteBuffer(bufferSpiked, CL_TRUE, 0, sizeof(arySpiked)*DATA_SIZE,  arySpiked, NULL, NULL);
 
-	  CStdTimer timeSim;
-	  timeSim.StartTimer();
+	  //CStdTimer timeSim;
+	  //timeSim.StartTimer();
 
 	  for(int iTimeSlice=0; iTimeSlice<1000; iTimeSlice++)
 	  {
@@ -250,8 +250,8 @@ void TestOpenCL::RunFastSpikingNeurons()
 
 	  }
 
-		double dblTotalTime = timeSim.StopTimer();
-        std::cout << "Total Time: " << dblTotalTime << std::endl;   
+		//double dblTotalTime = timeSim.StopTimer();
+        //std::cout << "Total Time: " << dblTotalTime << std::endl;   
 
 		SaveOutput(OUTPUT_FILE, aryData);
 

@@ -34,7 +34,6 @@ void NeuralModel::TimeStepInterval(short iVal)
 	if(iVal <= 0)
 		BOOST_THROW_EXCEPTION(InvalidParamValueException("NeuralModel", "TimeStepInterval", boost::lexical_cast<std::string>(iVal), "must be greater than zero."));
 
-	Std_IsAboveMin((int) 0, (int) iVal, TRUE, "TimeStepInterval");
 	m_iTimeStepInterval = iVal;
 }
 
@@ -48,8 +47,8 @@ void NeuralModel::TimeStep(float fltVal)
 
 	m_lpNervousSystem->RecalculateMinTimeStep();
 
-	//Find min time step.
-	float fltMin = m_lpNervousSystem->MinTimeStep();
+	//Find min time step. If the nervous system has a min time step then use it
+	float fltMin =  ((m_lpNervousSystem->MinTimeStep() > 0) && (m_lpNervousSystem->MinTimeStep() < fltVal)) ? m_lpNervousSystem->MinTimeStep() : fltVal;
 
 	//Division
 	int iDiv = (int) ((fltVal / fltMin) + 0.5f);
@@ -58,7 +57,7 @@ void NeuralModel::TimeStep(float fltVal)
 	TimeStepInterval(iDiv);
 
 	//Now recaculate the time step using the minimum time step as the base.
-	m_fltTimeStep = m_lpNervousSystem->MinTimeStep() * m_iTimeStepInterval;
+	m_fltTimeStep = fltMin * m_iTimeStepInterval;
 
 	m_lpNervousSystem->RecalculateMinTimeStep();
 }

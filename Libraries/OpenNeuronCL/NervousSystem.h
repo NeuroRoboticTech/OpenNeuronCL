@@ -8,6 +8,9 @@ namespace OpenNeuronCL
 	protected:
 		long m_lTimeSlice;
 		float m_fltMinTimeStep;
+		double m_dblRunSimTime;
+
+		OpenNeuronCL::Timer m_RunSimTimer;
 
 		std::vector<cl::Platform> m_aryPlatforms;
 		std::vector<cl::Device> m_aryDevices;
@@ -42,7 +45,7 @@ namespace OpenNeuronCL
 
 		virtual void Initialize();
 		virtual void StepSimulation();
-		virtual void RunSimulation(double dblTime);
+		virtual double RunSimulation(float fltTime);
 
 		static shared_ptr<INervousSystem>Create() 
 		{

@@ -8,6 +8,7 @@ NervousSystem::NervousSystem(void)
 {
 	m_lTimeSlice = 0;
 	m_fltMinTimeStep = 0;
+	m_dblRunSimTime = 0;
 }
 
 
@@ -42,6 +43,7 @@ shared_ptr<INeuralModel> NervousSystem::AddNeuralModel(string strType, double db
 {
 	shared_ptr<INeuralModel> lpModel = ClassFactory::GetNeuralModelInstance(strType, this, dblDT);
 	m_aryNeuralModels.push_back(lpModel);
+	RecalculateMinTimeStep();
 	return lpModel;
 }
 
@@ -80,9 +82,19 @@ void NervousSystem::StepSimulation()
 		lpModel->StepSimulation();
 }
 
-void NervousSystem::RunSimulation(double dblTime)
+double NervousSystem::RunSimulation(float fltTime)
 {
+	int iTimeSlices = (int) ((fltTime / MinTimeStep()) + 0.5f);
 
+	m_RunSimTimer.StartTimer();
+
+	for(int iSlice=0; iSlice<iTimeSlices; iSlice++)
+		StepSimulation();
+
+	m_dblRunSimTime = m_RunSimTimer.StopTimer();
+	std::cout << "Run Sim Total Time: " << m_dblRunSimTime << std::endl;   
+
+	return m_dblRunSimTime;
 }
 
 
