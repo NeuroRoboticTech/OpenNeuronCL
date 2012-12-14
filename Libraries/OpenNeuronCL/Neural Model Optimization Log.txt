@@ -1,0 +1,29 @@
+12/13/12
+I started by create a very simple fast spiking neural model with no synapses. I am simulating 0.2 seconds of real time with a time step of 0.2 ms. I started out by hard coding the neural type data, and in the first iteration I had an array for VmIn and VmOut. I found that the local size that was used made a huge difference in processing speed and the number of neurons that could be processed. 
+
+Next, I tried to use a structure to hold my data instead of using individual buffers. However, this proved to actually be slower, so I went back to using individual buffers. 
+
+I built a basic framework for doing neural processing and tested it with the fast spiking neuron. I then did another optimization where instead of having VmIn and VmOut as seperate buffers that need to be copied between kernel processes, I have a single buffer that is twice as long and set an active array variable in the kernel before calling it. This increased speeds by %41.
+
+I also found that if the local size is not split up correctly so that global size is a multiple of it then you run into problems. So say global size is 100, then you can set local size to 10 and it works, but if you set it to 32 then it dies.
+
+
+Here are the steps I believe need to be used for the neural processing.
+
+1. There will a double wide buffer for the External stimuli and inputs from the physics engine, just like for the Vm data. It will  
+
+1. Have a kernel for each type of synapse that will be used and run through them sequentially. The data must be structured to handle this. So I will need buffers with the correct spike or neuron membrane voltages that the synapse will be using. Synapses will be ordered based on post-synaptic neuron. So all synapses of Type X (normal, gated, modulated, spiking chemical, etc.) for neuron A will be processed, then B and so on. The synaptic current for that neuron will be accumulated in a variable for that neuron. Each synapse will have use an atomic add operation to add their current to the total input current for their neuron. 
+
+**Synapses that are keyed off of spikes will use the consilidated spike data to determine if a spike happened.
+Will this really be faster? If I have to have an if block in here for this I think it may actually make it slower. not sure. Need to test this**
+
+2. Once all synapses have been processed the adapters will be processed. Each adapter will also be ordered by post-synaptic neuron just like the synapses. There will be a neural model specifically for this. I will need to have a pool of memory at the nervous system level. This memory will be used for the adapter calculations, and to transfer data from the neural system to the CPU. The last step of the sim process will run a kernel for each module that will copy the required data from that module to the global pool for distribution. It will accumulate the adapter current into the input current variable for the associated neuron.
+
+2. Once all the synapses have been processed then the neurons will be processed. Each type of neuron (Fast spiking, IGF, firing rate, etc.) will have its own kernel and set of neuron variable data. At the end of the neuron synaptic processing stage the accumulated current for that neuron is cleared to 0 for the next process loop.
+
+3. While the kernels are being processed the global nervous system data will be transferred from global memory to the cpu, and from the cpu to global memory. 
+
+
+
+
+
