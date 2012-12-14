@@ -11,15 +11,15 @@ namespace OpenNeuronCL
 			shared_ptr<cl::CommandQueue> m_lpQueue;
 			cl::NDRange ndGlobal;
 			cl::NDRange ndLocal;
-			unsigned char m_iActiveArray;
 
 			vector< float > m_aryData;
 
 			//Fast Spiking Data
-			cl_float *m_aryVm, *m_aryVahp, *m_aryIinOn, *m_aryIinOff, *m_aryTestOut;
+			cl_float *m_aryVmIn, *m_aryVmOut;
+			cl_float *m_aryVahp, *m_aryIinOn, *m_aryIinOff, *m_aryTestOut;
 			cl_int *m_aryRefrCount; //, *m_arySpiked;
 
-			shared_ptr< cl::Buffer > m_bufferVm, m_bufferVahp;
+			shared_ptr< cl::Buffer > m_bufferVmIn, m_bufferVmOut, m_bufferVahp;
 			shared_ptr< cl::Buffer > m_bufferIinOn, m_bufferIinOff, m_bufferRefrCount; 
 			shared_ptr< cl::Buffer > m_bufferSpiked, m_bufferTestOut;
 

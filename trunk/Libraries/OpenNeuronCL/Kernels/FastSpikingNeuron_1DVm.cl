@@ -17,22 +17,17 @@ float CalculateAHPVoltageFloat(float fltVahp, uchar iSpiked)
 }
 
 //, __global uchar *arySpiked
-__kernel void FastSpikingNeuron(unsigned char iActiveArray, __global float *aryVm, 
-								__global float *aryVahp, __global float *aryIin,
-								__global int *aryRefrCount, __global float *aryTestOut)
+__kernel void FastSpikingNeuron(__global float *aryVmIn, __global float *aryVahp, __global float *aryIin,
+								__global int *aryRefrCount,
+								__global float *aryVmOut, __global float *aryTestOut)
 {
 	int gid = get_global_id(0);
-	size_t gsize = get_global_size(0);
-
-	int iActiveIdx = (gsize*iActiveArray)+gid;
-	int iInactiveIdx = (gsize*!iActiveArray) + gid;
-
-	float fltVm = aryVm[iInactiveIdx];
+	float fltVm = aryVmIn[gid];
 	float fltVahp = aryVahp[gid];
 	float fltIin = aryIin[gid];
 	int iRefrCount = aryRefrCount[gid];
-	unsigned char iSpiked = 0; //arySpiked[gid];
-	unsigned char iPreSpiked = 0; //iSpiked;
+	uchar iSpiked = 0; //arySpiked[gid];
+	uchar iPreSpiked = 0; //iSpiked;
 
 	fltVahp = CalculateAHPVoltageFloat(fltVahp, iSpiked);
 
@@ -55,11 +50,11 @@ __kernel void FastSpikingNeuron(unsigned char iActiveArray, __global float *aryV
 	if(iPreSpiked)
 		iRefrCount = 10;
 
-	aryVm[iActiveIdx] = fltVm;
+	aryVmOut[gid] = fltVm;
 	aryVahp[gid] = fltVahp;
 	aryRefrCount[gid] = iRefrCount;
 	//arySpiked[gid] = iSpiked;
-	aryTestOut[gid] = iInactiveIdx;
+	//aryTestOut[gid] = iSpiked;
 }
 
 
