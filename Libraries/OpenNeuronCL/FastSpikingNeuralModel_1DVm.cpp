@@ -11,22 +11,24 @@ namespace OpenNeuronCL
 FastSpikingNeuralModel::FastSpikingNeuralModel(INervousSystem *lpNS, double dblDT) : 
 	NeuralModel(lpNS, dblDT)
 {
-	m_aryVm = NULL;
+	m_aryVmIn = NULL;
+	m_aryVmOut = NULL;
 	m_aryVahp = NULL;
 	m_aryIinOn = NULL;
 	m_aryIinOff = NULL;
 	m_aryRefrCount = NULL;
+	//m_arySpiked = NULL;
 	m_aryTestOut = NULL;
-	m_iActiveArray = 0;
 }
 
 FastSpikingNeuralModel::~FastSpikingNeuralModel(void) 
 {
-	if(m_aryVm) delete[] m_aryVm;
+	if(m_aryVmIn) delete[] m_aryVmIn;
 	if(m_aryVahp) delete[] m_aryVahp;
 	if(m_aryIinOn) delete[] m_aryIinOn;
 	if(m_aryIinOff) delete[] m_aryIinOff;
 	if(m_aryRefrCount) delete[] m_aryRefrCount;
+	//if(m_arySpiked) delete[] m_arySpiked;
 	if(m_aryTestOut) delete[] m_aryTestOut;
 }
 
@@ -35,7 +37,6 @@ void FastSpikingNeuralModel::Initialize()
 	m_aryFsNeuronKernel = dynamic_pointer_cast<Kernel>(AddKernel("C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\Kernels\\FastSpikingNeuron.cl", "FastSpikingNeuron"));
 
 	//m_iGlobalDataSize = 100;    
-	m_iGlobalDataSize = 32;    
 	//m_iGlobalDataSize = 1024;    //2^10
 	//m_iGlobalDataSize = 2048;    //2^11
 	//m_iGlobalDataSize = 4096;    //2^12
@@ -46,7 +47,7 @@ void FastSpikingNeuralModel::Initialize()
 	//m_iGlobalDataSize = 131072;  //2^17
 	//m_iGlobalDataSize = 262144;    //2^18
 	//m_iGlobalDataSize = 524288;    //2^19
-	//m_iGlobalDataSize = 1048576;    //2^20
+	m_iGlobalDataSize = 1048576;    //2^20
 	//m_iGlobalDataSize = 8388608;    //2^23
 	//m_iGlobalDataSize = 16777216;    //2^24
 	//m_iLocalDataSize = 16;
@@ -60,25 +61,28 @@ void FastSpikingNeuralModel::SetupInitialMemory()
 	ndGlobal = cl::NDRange(m_iGlobalDataSize);
 	ndLocal = cl::NDRange(m_iLocalDataSize);
 
-	m_aryVm = new cl_float[m_iGlobalDataSize*2];
+	m_aryVmIn = new cl_float[m_iGlobalDataSize];
+	m_aryVmOut = new cl_float[m_iGlobalDataSize];
 	m_aryVahp = new cl_float[m_iGlobalDataSize];
 	m_aryIinOn = new cl_float[m_iGlobalDataSize];
 	m_aryIinOff = new cl_float[m_iGlobalDataSize];
 	m_aryRefrCount = new cl_int[m_iGlobalDataSize];
+	//m_arySpiked = new cl_uchar[m_iGlobalDataSize];
 	m_aryTestOut = new cl_float[m_iGlobalDataSize];
 
     // Initialize data
     for(int i=0; i<m_iGlobalDataSize; i++) 
 	{
-        m_aryVm[i] = 0.0f; //i*0.1f;
-        m_aryVm[m_iGlobalDataSize + i] = 0.0f; //i*0.1f;
+        m_aryVmIn[i] = 0.0f; //i*0.1f;
 		m_aryVahp[i] = 0.0f;
 		m_aryIinOn[i] = 0.8f;
 		m_aryIinOff[i] = 0.0f;
 		m_aryRefrCount[i] = 0;
+		//m_arySpiked[i] = 0;
     }
 
-	long lTotalSize = (sizeof(m_aryVm)*m_iGlobalDataSize*2) + 
+	long lTotalSize = sizeof(m_aryVmIn)*m_iGlobalDataSize + 
+					  sizeof(m_aryVmOut)*m_iGlobalDataSize +
 					  sizeof(m_aryVahp)*m_iGlobalDataSize + 
 					  sizeof(m_aryIinOn)*m_iGlobalDataSize +
 					  sizeof(m_aryRefrCount)*m_iGlobalDataSize + 
@@ -88,28 +92,32 @@ void FastSpikingNeuralModel::SetupInitialMemory()
 	long lTotalSizeMb = lTotalSizeKb/1024;
 
 	// Create buffers
-	m_bufferVm = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(m_aryVm)*m_iGlobalDataSize*2, m_aryVm));
+	m_bufferVmIn = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(m_aryVmIn)*m_iGlobalDataSize, m_aryVmIn));
+	m_bufferVmOut = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_WRITE_ONLY, sizeof(m_aryVmOut)*m_iGlobalDataSize, NULL));
 	m_bufferVahp = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(m_aryVahp)*m_iGlobalDataSize, m_aryVahp));
 	m_bufferIinOn = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(m_aryIinOn)*m_iGlobalDataSize, m_aryIinOn));
 	m_bufferIinOff = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(m_aryIinOff)*m_iGlobalDataSize, m_aryIinOff));
 	m_bufferRefrCount = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(m_aryRefrCount)*m_iGlobalDataSize, m_aryRefrCount));
+	//m_bufferSpiked = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(m_arySpiked)*m_iGlobalDataSize, m_arySpiked));
 	m_bufferTestOut = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_WRITE_ONLY, sizeof(m_aryTestOut)*m_iGlobalDataSize, NULL));
 
 	// Set kernel arguments
-	m_aryFsNeuronKernel->SetArg(0, m_iActiveArray);
-	m_aryFsNeuronKernel->SetArg(1, *(m_bufferVm.get()));
-	m_aryFsNeuronKernel->SetArg(2, *(m_bufferVahp.get()));
-	m_aryFsNeuronKernel->SetArg(3, *(m_bufferIinOn.get()));
-	m_aryFsNeuronKernel->SetArg(4, *(m_bufferRefrCount.get()));
+	m_aryFsNeuronKernel->SetArg(0, *(m_bufferVmIn.get()));
+	m_aryFsNeuronKernel->SetArg(1, *(m_bufferVahp.get()));
+	m_aryFsNeuronKernel->SetArg(2, *(m_bufferIinOn.get()));
+	m_aryFsNeuronKernel->SetArg(3, *(m_bufferRefrCount.get()));
+	//m_aryFsNeuronKernel->SetArg(4, *(m_bufferSpiked.get()));
+	m_aryFsNeuronKernel->SetArg(4, *(m_bufferVmOut.get()));
 	m_aryFsNeuronKernel->SetArg(5, *(m_bufferTestOut.get()));
 
 	// enqueue kernel-execution command 
 	m_lpQueue = m_lpNervousSystem->QueueForDevice(0);
-	m_lpQueue->enqueueWriteBuffer(*(m_bufferVm.get()), CL_TRUE, 0, sizeof(m_aryVm)*m_iGlobalDataSize*2,  m_aryVm, NULL, NULL);
+	m_lpQueue->enqueueWriteBuffer(*(m_bufferVmIn.get()), CL_TRUE, 0, sizeof(m_aryVmIn)*m_iGlobalDataSize,  m_aryVmIn, NULL, NULL);
 	m_lpQueue->enqueueWriteBuffer(*(m_bufferVahp.get()), CL_TRUE, 0, sizeof(m_aryVahp)*m_iGlobalDataSize,  m_aryVahp, NULL, NULL);
 	m_lpQueue->enqueueWriteBuffer(*(m_bufferIinOn.get()), CL_TRUE, 0, sizeof(m_aryIinOn)*m_iGlobalDataSize,  m_aryIinOn, NULL, NULL);
 	m_lpQueue->enqueueWriteBuffer(*(m_bufferIinOff.get()), CL_TRUE, 0, sizeof(m_aryIinOff)*m_iGlobalDataSize,  m_aryIinOff, NULL, NULL);
 	m_lpQueue->enqueueWriteBuffer(*(m_bufferRefrCount.get()), CL_TRUE, 0, sizeof(m_aryRefrCount)*m_iGlobalDataSize,  m_aryRefrCount, NULL, NULL);
+	//m_lpQueue->enqueueWriteBuffer(*(m_bufferSpiked.get()), CL_TRUE, 0, sizeof(m_arySpiked)*m_iGlobalDataSize,  m_arySpiked, NULL, NULL);
 }
 
 
@@ -120,29 +128,26 @@ void FastSpikingNeuralModel::StepModel()
 	
 	m_lpQueue->enqueueNDRangeKernel(m_aryFsNeuronKernel->CLKernel(), NULL, ndGlobal, ndLocal);
 
-	m_iActiveArray = !m_iActiveArray;
-	m_aryFsNeuronKernel->SetArg(0, m_iActiveArray);
-
 	//queue.enqueueReadBuffer(bufferVmOut, CL_TRUE, 0, sizeof(aryVmOut)*m_iGlobalDataSize,  aryVmOut, NULL, NULL);
 	//m_lpQueue->enqueueReadBuffer(*(m_bufferTestOut.get()), CL_TRUE, 0, sizeof(m_aryTestOut)*m_iGlobalDataSize,  m_aryTestOut, NULL, NULL);
 
 	//// Display updated buffer
 	//for(i=0; i<10; i++) 
 	//{
-	// printf("%6.5f, %6.5f", m_aryTestOut[i], m_aryTestOut[i]);
+	// printf("%6.5f, %6.5f", aryVmOut[i], aryVmIn[i]);
 	// printf("\n");
 	//} 
 	//printf("\n\n");
 
-	//m_lpQueue->enqueueCopyBuffer(*(m_bufferVmOut.get()), *(m_bufferVmIn.get()), 0, 0, sizeof(m_aryVmOut)*m_iGlobalDataSize, NULL, NULL);
+	m_lpQueue->enqueueCopyBuffer(*(m_bufferVmOut.get()), *(m_bufferVmIn.get()), 0, 0, sizeof(m_aryVmOut)*m_iGlobalDataSize, NULL, NULL);
 
-	//m_lpQueue->enqueueReadBuffer(*(m_bufferVm.get()), CL_TRUE, 0, sizeof(m_aryVm)*m_iGlobalDataSize*2,  m_aryVm, NULL, NULL);
+	//m_lpQueue->enqueueReadBuffer(*(m_bufferVmIn.get()), CL_TRUE, 0, sizeof(m_aryVmIn)*m_iGlobalDataSize,  m_aryVmIn, NULL, NULL);
 
-	//m_aryData.push_back(m_aryVm[0]);
-	//Display updated buffer
-	//for(int i=0; i<10; i++) 
+	//m_aryData.push_back(m_aryVmIn[m_iGlobalDataSize-1]);
+	// Display updated buffer
+	//for(int i=0; i<1; i++) 
 	//{
-	//	printf("%6.5f, %6.5f, %6.5f", m_aryVm[i], m_aryVm[m_iGlobalDataSize+i], m_aryTestOut[i]);
+	//	printf("%6.5f, %6.5f", m_aryVmIn[i], m_aryTestOut[i]);
 	//	printf("\n");
 	//}
 	//printf("\n\n");

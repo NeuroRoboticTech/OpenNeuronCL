@@ -25,6 +25,7 @@ namespace OpenNeuronCL
 		virtual cl::Kernel &CLKernel() {return *(m_Kernel.get());};
 
 		virtual void SetArg(int iIdx, cl::Buffer &buf);
+		virtual void SetArg(int iIdx, unsigned char iVal);
 
 		virtual void Initialize();
 		virtual void StepSimulation() {};
