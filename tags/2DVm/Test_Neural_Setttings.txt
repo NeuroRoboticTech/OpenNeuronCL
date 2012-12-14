@@ -1,0 +1,25 @@
+local variables
+
+m_fltVm
+m_lRefractoryCount
+m_bSpiked
+m_fltVahp
+m_fltIin = m_fltIext + m_fltIadapter
+
+private variables
+m_fltVmDecr
+m_fltVTotal
+m_fltVahpDecr
+
+
+constants
+IExt                            2e-8
+m_lpFST->TimeConstant()         0.039210598915815353
+m_lpFST->AHP_TC()               0.064493000507354736
+m_lpFST->AHP_Wadj(FALSE)        -2.4271199703216553
+m_lpType->ExtIConv()            40000000
+m_lpEBModule->AbsRefractory()   10
+
+
+
+dumpbin /symbols C:\Projects\AnimatLabSDK\OpenNeuronCl\Libraries\OpenNeuronCL\Debug\OpenNeuronCL.obj
