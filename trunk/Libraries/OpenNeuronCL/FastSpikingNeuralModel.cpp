@@ -34,8 +34,8 @@ void FastSpikingNeuralModel::Initialize()
 {
 	m_aryFsNeuronKernel = dynamic_pointer_cast<Kernel>(AddKernel("C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\Kernels\\FastSpikingNeuron.cl", "FastSpikingNeuron"));
 
-	//m_iGlobalDataSize = 100;    
-	m_iGlobalDataSize = 32;    
+	m_iGlobalDataSize = 100;    
+	//m_iGlobalDataSize = 32;    
 	//m_iGlobalDataSize = 1024;    //2^10
 	//m_iGlobalDataSize = 2048;    //2^11
 	//m_iGlobalDataSize = 4096;    //2^12
@@ -49,7 +49,7 @@ void FastSpikingNeuralModel::Initialize()
 	//m_iGlobalDataSize = 1048576;    //2^20
 	//m_iGlobalDataSize = 8388608;    //2^23
 	//m_iGlobalDataSize = 16777216;    //2^24
-	//m_iLocalDataSize = 16;
+	m_iLocalDataSize = 10;
 
 	InitializeKernels();
 	SetupInitialMemory();
@@ -95,13 +95,24 @@ void FastSpikingNeuralModel::SetupInitialMemory()
 	m_bufferRefrCount = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(m_aryRefrCount)*m_iGlobalDataSize, m_aryRefrCount));
 	m_bufferTestOut = shared_ptr<cl::Buffer>( new cl::Buffer(m_lpNervousSystem->ActiveContext(), CL_MEM_WRITE_ONLY, sizeof(m_aryTestOut)*m_iGlobalDataSize, NULL));
 
-	// Set kernel arguments
-	m_aryFsNeuronKernel->SetArg(0, m_iActiveArray);
-	m_aryFsNeuronKernel->SetArg(1, *(m_bufferVm.get()));
-	m_aryFsNeuronKernel->SetArg(2, *(m_bufferVahp.get()));
-	m_aryFsNeuronKernel->SetArg(3, *(m_bufferIinOn.get()));
-	m_aryFsNeuronKernel->SetArg(4, *(m_bufferRefrCount.get()));
-	m_aryFsNeuronKernel->SetArg(5, *(m_bufferTestOut.get()));
+	try
+	{
+		// Set kernel arguments
+		m_lLocalTimeSlice = m_lpNervousSystem->TimeSlice();
+		cl::Kernel &kernel = m_aryFsNeuronKernel->CLKernel();
+		kernel.setArg(0, m_lLocalTimeSlice);
+		kernel.setArg(1, m_iActiveArray);
+		kernel.setArg(2, *(m_bufferVm.get()));
+		kernel.setArg(3, *(m_bufferVahp.get()));
+		kernel.setArg(4, *(m_bufferIinOn.get()));
+		kernel.setArg(5, *(m_bufferRefrCount.get()));
+		kernel.setArg(6, *(m_bufferTestOut.get()));
+	}
+	catch(cl::Error e)
+	{
+		std::cout << e.what() << ": Error code " << e.err() << std::endl;   
+		throw e;
+	}
 
 	// enqueue kernel-execution command 
 	m_lpQueue = m_lpNervousSystem->QueueForDevice(0);
@@ -118,13 +129,17 @@ void FastSpikingNeuralModel::StepModel()
 	//if(iTimeSlice == 800)
 	//	queue.enqueueCopyBuffer(bufferIinOff, bufferIinOn, 0, 0, sizeof(aryIinOn)*m_iGlobalDataSize, NULL, NULL);
 	
-	m_lpQueue->enqueueNDRangeKernel(m_aryFsNeuronKernel->CLKernel(), NULL, ndGlobal, ndLocal);
+	cl::Kernel &kernel = m_aryFsNeuronKernel->CLKernel();
+
+	m_lLocalTimeSlice = m_lpNervousSystem->TimeSlice();
+	kernel.setArg(0, m_lLocalTimeSlice);
 
 	m_iActiveArray = !m_iActiveArray;
-	m_aryFsNeuronKernel->SetArg(0, m_iActiveArray);
+	kernel.setArg(1, m_iActiveArray);
+
+	m_lpQueue->enqueueNDRangeKernel(kernel, NULL, ndGlobal, ndLocal);
 
 	//queue.enqueueReadBuffer(bufferVmOut, CL_TRUE, 0, sizeof(aryVmOut)*m_iGlobalDataSize,  aryVmOut, NULL, NULL);
-	//m_lpQueue->enqueueReadBuffer(*(m_bufferTestOut.get()), CL_TRUE, 0, sizeof(m_aryTestOut)*m_iGlobalDataSize,  m_aryTestOut, NULL, NULL);
 
 	//// Display updated buffer
 	//for(i=0; i<10; i++) 
@@ -136,16 +151,17 @@ void FastSpikingNeuralModel::StepModel()
 
 	//m_lpQueue->enqueueCopyBuffer(*(m_bufferVmOut.get()), *(m_bufferVmIn.get()), 0, 0, sizeof(m_aryVmOut)*m_iGlobalDataSize, NULL, NULL);
 
-	//m_lpQueue->enqueueReadBuffer(*(m_bufferVm.get()), CL_TRUE, 0, sizeof(m_aryVm)*m_iGlobalDataSize*2,  m_aryVm, NULL, NULL);
+	m_lpQueue->enqueueReadBuffer(*(m_bufferTestOut.get()), CL_TRUE, 0, sizeof(m_aryTestOut)*m_iGlobalDataSize,  m_aryTestOut, NULL, NULL);
+	m_lpQueue->enqueueReadBuffer(*(m_bufferVm.get()), CL_TRUE, 0, sizeof(m_aryVm)*m_iGlobalDataSize*2,  m_aryVm, NULL, NULL);
 
 	//m_aryData.push_back(m_aryVm[0]);
 	//Display updated buffer
-	//for(int i=0; i<10; i++) 
-	//{
-	//	printf("%6.5f, %6.5f, %6.5f", m_aryVm[i], m_aryVm[m_iGlobalDataSize+i], m_aryTestOut[i]);
-	//	printf("\n");
-	//}
-	//printf("\n\n");
+	for(int i=0; i<10; i++) 
+	{
+		printf("%6.5f, %6.5f, %6.5f", m_aryVm[i], m_aryVm[m_iGlobalDataSize+i], m_aryTestOut[i]);
+		printf("\n");
+	}
+	printf("\n\n");
 
 }
 
