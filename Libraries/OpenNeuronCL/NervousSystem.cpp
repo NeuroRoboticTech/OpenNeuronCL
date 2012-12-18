@@ -80,6 +80,7 @@ void NervousSystem::StepSimulation()
 {
 	BOOST_FOREACH(shared_ptr<INeuralModel> lpModel, m_aryNeuralModels )
 		lpModel->StepSimulation();
+	m_lTimeSlice++;
 }
 
 double NervousSystem::RunSimulation(float fltTime)

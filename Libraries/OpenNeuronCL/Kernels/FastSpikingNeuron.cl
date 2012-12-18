@@ -1,3 +1,7 @@
+#include "C:/Projects/AnimatLabSDK/OpenNeuronCL/include/Random123/threefry.h"
+
+__constant float aryNT_Decrement[2] = {0.039210598915815353f, 0.039210598915815353f};
+
 float CalculateAHPVoltageFloat(float fltVahp, uchar iSpiked)
 {
 	//Decrement the previous Vahp and THEN add more for a new spike if needed.
@@ -16,8 +20,24 @@ float CalculateAHPVoltageFloat(float fltVahp, uchar iSpiked)
 	return fltVahp;
 }
 
-//, __global uchar *arySpiked
-__kernel void FastSpikingNeuron(unsigned char iActiveArray, __global float *aryVm, 
+float GenerateRandom(int gid, int iTimeSlice)
+{
+	threefry4x32_key_t k = {{gid, iTimeSlice, iTimeSlice, 0x12345678}};
+	threefry4x32_ctr_t c = {{0, 0xf00dcafe, 0xdeadbeef, 0xbeeff00d}};
+
+	union {
+		threefry4x32_ctr_t c;
+		int4 i;
+	} u;
+
+	u.c = threefry4x32(c, k);
+	unsigned int iRnd = (unsigned int) u.i.x;
+
+	float fltRnd = iRnd*(1.0/4294967296.0);
+	return fltRnd;
+}
+
+__kernel void FastSpikingNeuron(int lTimeSlice, unsigned char iActiveArray, __global float *aryVm, 
 								__global float *aryVahp, __global float *aryIin,
 								__global int *aryRefrCount, __global float *aryTestOut)
 {
@@ -31,12 +51,12 @@ __kernel void FastSpikingNeuron(unsigned char iActiveArray, __global float *aryV
 	float fltVahp = aryVahp[gid];
 	float fltIin = aryIin[gid];
 	int iRefrCount = aryRefrCount[gid];
-	unsigned char iSpiked = 0; //arySpiked[gid];
+	unsigned char iSpiked = 0; //aryRefrCount[gid];
 	unsigned char iPreSpiked = 0; //iSpiked;
 
 	fltVahp = CalculateAHPVoltageFloat(fltVahp, iSpiked);
 
-	fltVm += (fltVahp + fltIin - (fltVm*0.039210598915815353f));
+	fltVm += (fltVahp + fltIin - (fltVm*aryNT_Decrement[0])); //0.039210598915815353f));
 
 	//For now lets just do one spike when it starts.
 	//If we are in the refractory period then do not allow another spike to occur period.
@@ -55,11 +75,13 @@ __kernel void FastSpikingNeuron(unsigned char iActiveArray, __global float *aryV
 	if(iPreSpiked)
 		iRefrCount = 10;
 
+	float fltRandom = GenerateRandom(gid, lTimeSlice);
+
 	aryVm[iActiveIdx] = fltVm;
 	aryVahp[gid] = fltVahp;
 	aryRefrCount[gid] = iRefrCount;
 	//arySpiked[gid] = iSpiked;
-	aryTestOut[gid] = iInactiveIdx;
+	aryTestOut[gid] = fltRandom;
 }
 
 

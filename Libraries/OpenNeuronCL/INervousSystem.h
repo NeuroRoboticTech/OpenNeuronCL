@@ -10,8 +10,8 @@ namespace OpenNeuronCL
 		INervousSystem(void) {}
 		virtual ~INervousSystem(void) {};
 
-		virtual void TimeSlice(long lSlice) = 0;
-		virtual long TimeSlice() = 0;
+		virtual void TimeSlice(unsigned long lSlice) = 0;
+		virtual unsigned long TimeSlice() = 0;
 
 		virtual float MinTimeStep() = 0;
 

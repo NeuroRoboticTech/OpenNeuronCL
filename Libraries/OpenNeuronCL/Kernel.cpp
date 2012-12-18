@@ -69,13 +69,11 @@ namespace OpenNeuronCL
 	void Kernel::SetArg(int iIdx, cl::Buffer &buf)
 	{
 		m_Kernel->setArg(iIdx, buf);
-
 	}
 
 	void Kernel::SetArg(int iIdx, unsigned char iVal)
 	{
 		m_Kernel->setArg(iIdx, iVal);
-
 	}
-
+	
 }
