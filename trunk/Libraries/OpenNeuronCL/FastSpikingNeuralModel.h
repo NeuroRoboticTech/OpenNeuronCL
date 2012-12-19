@@ -12,7 +12,7 @@ namespace OpenNeuronCL
 			cl::NDRange ndGlobal;
 			cl::NDRange ndLocal;
 			unsigned char m_iActiveArray;
-			int m_lLocalTimeSlice;
+			int m_iSeed;
 
 			vector< float > m_aryData;
 

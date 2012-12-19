@@ -6,7 +6,7 @@ namespace OpenNeuronCL
 
 NervousSystem::NervousSystem(void)
 {
-	m_lTimeSlice = 0;
+	m_iTimeSlice = 0;
 	m_fltMinTimeStep = 0;
 	m_dblRunSimTime = 0;
 }
@@ -80,12 +80,12 @@ void NervousSystem::StepSimulation()
 {
 	BOOST_FOREACH(shared_ptr<INeuralModel> lpModel, m_aryNeuralModels )
 		lpModel->StepSimulation();
-	m_lTimeSlice++;
+	m_iTimeSlice++;
 }
 
 double NervousSystem::RunSimulation(float fltTime)
 {
-	int iTimeSlices = (int) ((fltTime / MinTimeStep()) + 0.5f);
+	int iTimeSlices = (unsigned int) ((fltTime / MinTimeStep()) + 0.5f);
 
 	m_RunSimTimer.StartTimer();
 
