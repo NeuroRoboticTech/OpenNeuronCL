@@ -47,7 +47,7 @@ namespace OpenNeuronCL
 
 		try
 		{
-			m_Program->build(m_lpNervousSystem->ActiveDevices(m_lpModel));
+			m_Program->build(m_lpNervousSystem->ActiveDevices(m_lpModel), "-I C:/Projects/AnimatLabSDK/OpenNeuronCL");
 		}
 		catch(cl::Error e)
 		{

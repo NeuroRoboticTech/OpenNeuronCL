@@ -1,4 +1,4 @@
-#include "C:/Projects/AnimatLabSDK/OpenNeuronCL/include/Random123/threefry.h"
+#include "include/KernelRandomNumbers.h"
 
 __constant float aryNT_Decrement[2] = {0.039210598915815353f, 0.039210598915815353f};
 
@@ -20,24 +20,9 @@ float CalculateAHPVoltageFloat(float fltVahp, uchar iSpiked)
 	return fltVahp;
 }
 
-float GenerateRandom(int gid, int iTimeSlice)
-{
-	threefry4x32_key_t k = {{gid, iTimeSlice, iTimeSlice, 0x12345678}};
-	threefry4x32_ctr_t c = {{0, 0xf00dcafe, 0xdeadbeef, 0xbeeff00d}};
 
-	union {
-		threefry4x32_ctr_t c;
-		int4 i;
-	} u;
-
-	u.c = threefry4x32(c, k);
-	unsigned int iRnd = (unsigned int) u.i.x;
-
-	float fltRnd = iRnd*(1.0/4294967296.0);
-	return fltRnd;
-}
-
-__kernel void FastSpikingNeuron(int lTimeSlice, unsigned char iActiveArray, __global float *aryVm, 
+__kernel void FastSpikingNeuron(unsigned int iTimeSlice, unsigned char iActiveArray, 
+								unsigned int iSeed, __global float *aryVm, 
 								__global float *aryVahp, __global float *aryIin,
 								__global int *aryRefrCount, __global float *aryTestOut)
 {
@@ -75,7 +60,7 @@ __kernel void FastSpikingNeuron(int lTimeSlice, unsigned char iActiveArray, __gl
 	if(iPreSpiked)
 		iRefrCount = 10;
 
-	float fltRandom = GenerateRandom(gid, lTimeSlice);
+	float fltRandom = RandomFloat(gid, iTimeSlice, iSeed, 10, 15);
 
 	aryVm[iActiveIdx] = fltVm;
 	aryVahp[gid] = fltVahp;

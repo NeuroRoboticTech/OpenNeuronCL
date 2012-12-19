@@ -6,7 +6,7 @@ namespace OpenNeuronCL
 	class NervousSystem : public OpenNeuronCLBase, public INervousSystem
 	{
 	protected:
-		unsigned long m_lTimeSlice;
+		unsigned long m_iTimeSlice;
 		float m_fltMinTimeStep;
 		double m_dblRunSimTime;
 
@@ -27,8 +27,8 @@ namespace OpenNeuronCL
 
 		virtual unsigned int ID() {return m_iID;};
 
-		virtual void TimeSlice(unsigned long lSlice) {m_lTimeSlice = lSlice;};
-		virtual unsigned long TimeSlice() {return m_lTimeSlice;};
+		virtual void TimeSlice(unsigned int iSlice) {m_iTimeSlice = iSlice;};
+		virtual unsigned int TimeSlice() {return m_iTimeSlice;};
 
 		virtual float MinTimeStep() {return m_fltMinTimeStep;};
 

@@ -18,6 +18,7 @@ FastSpikingNeuralModel::FastSpikingNeuralModel(INervousSystem *lpNS, double dblD
 	m_aryRefrCount = NULL;
 	m_aryTestOut = NULL;
 	m_iActiveArray = 0;
+	m_iSeed = 12345;
 }
 
 FastSpikingNeuralModel::~FastSpikingNeuralModel(void) 
@@ -98,15 +99,16 @@ void FastSpikingNeuralModel::SetupInitialMemory()
 	try
 	{
 		// Set kernel arguments
-		m_lLocalTimeSlice = m_lpNervousSystem->TimeSlice();
+		//m_lLocalTimeSlice =;
 		cl::Kernel &kernel = m_aryFsNeuronKernel->CLKernel();
-		kernel.setArg(0, m_lLocalTimeSlice);
+		kernel.setArg(0, m_lpNervousSystem->TimeSlice());
 		kernel.setArg(1, m_iActiveArray);
-		kernel.setArg(2, *(m_bufferVm.get()));
-		kernel.setArg(3, *(m_bufferVahp.get()));
-		kernel.setArg(4, *(m_bufferIinOn.get()));
-		kernel.setArg(5, *(m_bufferRefrCount.get()));
-		kernel.setArg(6, *(m_bufferTestOut.get()));
+		kernel.setArg(2, m_iSeed);
+		kernel.setArg(3, *(m_bufferVm.get()));
+		kernel.setArg(4, *(m_bufferVahp.get()));
+		kernel.setArg(5, *(m_bufferIinOn.get()));
+		kernel.setArg(6, *(m_bufferRefrCount.get()));
+		kernel.setArg(7, *(m_bufferTestOut.get()));
 	}
 	catch(cl::Error e)
 	{
@@ -131,8 +133,8 @@ void FastSpikingNeuralModel::StepModel()
 	
 	cl::Kernel &kernel = m_aryFsNeuronKernel->CLKernel();
 
-	m_lLocalTimeSlice = m_lpNervousSystem->TimeSlice();
-	kernel.setArg(0, m_lLocalTimeSlice);
+	//m_lLocalTimeSlice = m_lpNervousSystem->TimeSlice();
+	kernel.setArg(0, m_lpNervousSystem->TimeSlice());
 
 	m_iActiveArray = !m_iActiveArray;
 	kernel.setArg(1, m_iActiveArray);
@@ -162,7 +164,6 @@ void FastSpikingNeuralModel::StepModel()
 		printf("\n");
 	}
 	printf("\n\n");
-
 }
 
 
