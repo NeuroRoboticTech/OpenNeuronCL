@@ -11,6 +11,7 @@ NeuralModel::NeuralModel(INervousSystem *lpNS, double dblDT) : INeuralModel(lpNS
 	if(!m_lpNervousSystem)
 		BOOST_THROW_EXCEPTION(BasePtrNotInitException("NeuralModel", "NervousSystem"));
 
+	m_lpNervousSystem->EnableQueueProfiling(true);
 	m_iTimeStepInterval = 0;
 	m_iTimeStepCount = 0;
 	TimeStep(dblDT);

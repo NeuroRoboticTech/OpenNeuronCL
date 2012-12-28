@@ -34,6 +34,8 @@ namespace OpenNeuronCL
 
 	void Kernel::Build()
 	{
+		printf("Building Kernel: %s\n", m_arySourceFiles[0]);
+
 		// Create kernel.
 		//TODO: For now only using a single source file. Change this to be able to handle multiple files. 
 		std::ifstream programFile(m_arySourceFiles[0]);
@@ -58,6 +60,7 @@ namespace OpenNeuronCL
 			throw e;
 		}
 
+		printf("Kernel built.\n", m_arySourceFiles[0]);
 		m_Kernel = shared_ptr<cl::Kernel>(new cl::Kernel(CLProgram(), m_strKernelName.c_str()));
 	}
 
