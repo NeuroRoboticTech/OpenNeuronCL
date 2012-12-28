@@ -9,6 +9,7 @@ namespace OpenNeuronCL
 		unsigned long m_iTimeSlice;
 		float m_fltMinTimeStep;
 		double m_dblRunSimTime;
+		bool m_bEnableQueueProfiling;
 
 		OpenNeuronCL::Timer m_RunSimTimer;
 
@@ -26,6 +27,9 @@ namespace OpenNeuronCL
 		virtual ~NervousSystem(void);
 
 		virtual unsigned int ID() {return m_iID;};
+
+		virtual void EnableQueueProfiling(bool bVal) {m_bEnableQueueProfiling = bVal;};
+		virtual bool EnableQueueProfiling() {return m_bEnableQueueProfiling;};
 
 		virtual void TimeSlice(unsigned int iSlice) {m_iTimeSlice = iSlice;};
 		virtual unsigned int TimeSlice() {return m_iTimeSlice;};

@@ -76,10 +76,16 @@ namespace OpenNeuronCL
 	{
 		class InvalidNeuronModelTypeException;
 	}
+
+	namespace UnitTests
+	{
+		class TestFastSpikingNeuralModel;
+	}
 }
 
 using namespace OpenNeuronCL;
 using namespace OpenNeuronCL::Exceptions;
+using namespace OpenNeuronCL::UnitTests;
 
 #include "ONCL_Exceptions.h"
 #include "IOpenNeuronCLBase.h"
@@ -89,5 +95,6 @@ using namespace OpenNeuronCL::Exceptions;
 #include "IKernel.h"
 #include "ONCL_ClassFactory.h"
 #include "OpenNeuronCLUtils.h"
+
 
 #endif // __OPEN_NEURON_CL_LIB_DLL_H__

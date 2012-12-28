@@ -46,6 +46,8 @@
 #include <vfw.h>
 using namespace std;
 
+#define TESTING_APP
+
 #include "OpenNeuronCLIncludes.h"
 
 

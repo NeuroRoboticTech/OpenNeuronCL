@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "OpenNeuronCLUtils.h"      // OpenNeuronCL
+#include "FastSpikingNeuralModel.h"
 
 //#ifdef WIN32
 //	#include <Rpc.h>
@@ -38,6 +39,5 @@ namespace OpenNeuronCL
 	//#endif
 	//	return s;
 	//}
-
 
 }			//OpenNeuronCL

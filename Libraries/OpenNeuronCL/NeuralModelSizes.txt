@@ -1,0 +1,65 @@
+
+
+Fast Spiking Neuron:
+Vm 0, 1
+Vahp
+Iin
+PostSynWeightDecay
+Data1
+  0-6: RefrCount
+  7: Spike 
+  8-31: Delay
+
+6, floats
+
+IGF spiking neuron:
+Same as above but needs 
+m_fltGahp
+
+total 7 floats
+
+
+
+Fast Spiking Synapse:
+Vsyn
+Weight
+PreSynWeightDecay
+Delay_count (char)
+
+Total 3 floats
+
+
+IGF spiking synapse
+same as above but needs
+Gsyn
+and Vm of post-neuron
+
+
+Fast Spiking Neuron Type Data
+Vth
+TimeConstant
+MaxRefCount
+AHP_Weight
+AHP_TimeConstant
+
+Spiking Neuron Type Data
+Same as above but with 
+AHP_EqPot
+
+
+Fast Spiking Synapse Type Data
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

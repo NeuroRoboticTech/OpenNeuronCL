@@ -220,7 +220,10 @@ Copy "$(TargetPath)" ..\..\bin</Command>
     <None Include="Kernels\BufferTestNoStruct.cl" />
     <None Include="Kernels\BufferTestWithStruct.cl" />
     <None Include="Kernels\FastSpikingNeuron.cl" />
+    <None Include="Kernels\FastSpikingSynapse.cl" />
     <None Include="Kernels\ID_Check.cl" />
+    <None Include="Kernels\TestAddSynapsePerNeuron.cl" />
+    <None Include="Kernels\TestAtomicAdd.cl" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OpenNeuronCL.rc" />

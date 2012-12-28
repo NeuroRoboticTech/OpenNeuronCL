@@ -27,3 +27,25 @@ Will this really be faster? If I have to have an if block in here for this I thi
 
 
 
+
+Split up all synapses for a given neuron to be processed over a warp of threads.
+
+
+I have done some more research and I have decided to build OpenNeuronCL to use the PyNN standard for interface. Within Animatlab I will have subsystem node that will allow the user to specify python script for configuring the nervous system for their organism. OpenNeuronCL will have some global commands to retrieve object pointers. So I should be able to embedd the python to run those scripts to configure the nervous systems, but still obtain the c++ pointers to the objects I will need in order to use it. I will use boost.Python for the python interface to c++ classes.
+
+
+
+Synapse Iin consolidation
+I need an efficient method of adding the input current for each incoming synapse of a neuron and storing this in the Iin section for that neuron for use in the next sim step. Here are two simple methods for attacking this problem.
+
+1. Go through each neuron and loop over the number of number of synapses and add them up.
+   Benefits: no atomic operation needed. It will only be accessing the neuron Iin from within that thread.
+   Defects: This is linear. It will cause warp divergences, and non-coalesed memory accesses for the synapses.
+
+2. At the end of each neuron process zero out the Iin variable. During each synapse kernel have an atomic mutex that is used to add the values.
+
+
+
+I did some tests that had some interesting results. the atomic add is flat out. It was slower than chrismas. It was 730 times slower. It is also a bit odd. If I had the atomic ops in the file at all it slowed it down a lot even if I did not use them. I had one test where I did not use the atomic ops, just set the sum value directly, and it was much slower than my other test that looped over the synapse values per neuron and added it. 
+
+I also built a test that when through each neuron and added all synapse values for that neuron. I had one that did this directly, and another that did this in a strided fashion. There was no significant increase in the speed when doing strided on this simple test, so I will start simple and see what the timing looks like. I will simply sum up the input currents for each synapse for a given neuron before doing the processing. If I did not need to be able to add external current I could completely eliminate one of the float data types for Iin.

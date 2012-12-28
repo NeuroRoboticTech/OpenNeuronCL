@@ -3,6 +3,7 @@
 #include "NeuralModel.h"
 #include "Kernel.h"
 #include "FastSpikingNeuralModel.h"
+//#include "TestSynapseSummation.h"
 
 namespace OpenNeuronCL
 {
@@ -18,6 +19,7 @@ ClassFactory::ClassFactory(void)
 
 	//Fill in neural model map
 	NeuralModelMap["FastSpikingNeuralModel"] = boost::bind(&FastSpikingNeuralModel::Create, _1, _2);
+	//NeuralModelMap["TestSynapseSummation"] = boost::bind(&TestSynapseSummation::Create, _1, _2);
 
 	//Fill in kernel map
 	KernelMap["Kernel"] = boost::bind(&Kernel::Create, _1, _2, _3, _4);

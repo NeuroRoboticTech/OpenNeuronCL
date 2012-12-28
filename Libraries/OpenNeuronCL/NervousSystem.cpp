@@ -9,6 +9,7 @@ NervousSystem::NervousSystem(void)
 	m_iTimeSlice = 0;
 	m_fltMinTimeStep = 0;
 	m_dblRunSimTime = 0;
+	m_bEnableQueueProfiling = false;
 }
 
 
@@ -71,7 +72,11 @@ void NervousSystem::CreateContext()
       
 	m_Context = shared_ptr<cl::Context>(new cl::Context(m_aryDevices));
 
-	shared_ptr< cl::CommandQueue> lpQueue(new cl::CommandQueue(ActiveContext(), m_aryDevices[0]));
+	cl_command_queue_properties props;
+	if(m_bEnableQueueProfiling)
+		props = CL_QUEUE_PROFILING_ENABLE;
+
+	shared_ptr< cl::CommandQueue> lpQueue(new cl::CommandQueue(ActiveContext(), m_aryDevices[0], props));
 	m_aryQueues.insert(make_pair(0, lpQueue));
 }
 
@@ -87,13 +92,21 @@ double NervousSystem::RunSimulation(float fltTime)
 {
 	int iTimeSlices = (unsigned int) ((fltTime / MinTimeStep()) + 0.5f);
 
-	m_RunSimTimer.StartTimer();
+	try
+	{
+		m_RunSimTimer.StartTimer();
 
-	for(int iSlice=0; iSlice<iTimeSlices; iSlice++)
-		StepSimulation();
+		for(int iSlice=0; iSlice<iTimeSlices; iSlice++)
+			StepSimulation();
 
-	m_dblRunSimTime = m_RunSimTimer.StopTimer();
-	std::cout << "Run Sim Total Time: " << m_dblRunSimTime << std::endl;   
+		m_dblRunSimTime = m_RunSimTimer.StopTimer();
+		std::cout << "Run Sim Total Time: " << m_dblRunSimTime << std::endl;   
+	}
+	catch(cl::Error e)
+	{
+		std::cout << e.what() << ": Error code " << e.err() << std::endl;   
+	}
+
 
 	return m_dblRunSimTime;
 }
