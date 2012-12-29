@@ -23,6 +23,9 @@ namespace OpenNeuronCL
 		virtual void RemoveKernel(int iID) = 0;
 
 		virtual bool NeedToStep(bool bIncrement) = 0;
+
+		virtual void StartingStepSequence() = 0;
+		virtual void EndingStepSequence() = 0;
 	};
 
 }

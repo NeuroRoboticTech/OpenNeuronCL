@@ -10,6 +10,7 @@ namespace OpenNeuronCL
 			string m_strOutputfile; 
 
 			shared_ptr<Kernel> m_aryFsNeuronKernel;
+			shared_ptr<Kernel> m_aryFsSynapseKernel;
 			shared_ptr<cl::CommandQueue> m_lpQueue;
 			int m_iSeed;
 			
@@ -23,6 +24,9 @@ namespace OpenNeuronCL
 
 			cl::NDRange m_FSN_Global;
 			cl::NDRange m_FSN_Local;
+
+			cl::NDRange m_FSS_Global;
+			cl::NDRange m_FSS_Local;
 
 			//Neuron Fast Spiking Data
 			cl_float *m_aryVm, *m_aryVahp, *m_aryIext;
@@ -38,17 +42,17 @@ namespace OpenNeuronCL
 			shared_ptr< cl::Buffer > m_bufVm, m_bufVahp, m_bufIext; 
 			shared_ptr< cl::Buffer > m_bufPostSynWeightDecay, m_bufTestOut;
 			shared_ptr< cl::Buffer > m_bufSynapseStartIdx, m_bufNeuronData1, m_bufNeuronData2;
-			//shared_ptr< cl::Buffer > m_bufSynapseCount, m_bufNeuronTypeID;
-
-			//shared_ptr< cl::Buffer > m_bufTest;
 
 			//Synapse Fast Spiking Data
-			cl_float *m_aryVsyn, *m_aryWeight, *m_aryPreSynWeightDecay;
-			cl_uchar *m_arySynapseTypeID; 
-			cl_uint *m_aryPreSynNeuronIdx;
+			cl_float *m_aryVsyn, *m_aryWeight, *m_aryPreSynWeightDecay, *m_arySynTestOut;
+			cl_uint *m_aryPreSynNeuronIdx, *m_arySynapseData1;
 
-			shared_ptr< cl::Buffer > m_bufVsyn, m_bufWeight, m_bufPreSynWeightDecay;
-			shared_ptr< cl::Buffer > m_bufSynapseTypeID, m_bufPreSynNeuronIdx; 
+			shared_ptr< cl::Buffer > m_bufVsyn, m_bufWeight, m_bufPreSynWeightDecay, m_bufSynTestOut;
+			shared_ptr< cl::Buffer > m_bufSynapseData1, m_bufPreSynNeuronIdx; 
+
+			shared_ptr<cl::Event> m_aryMarkerEvent;
+
+			OpenNeuronCL::Timer m_RunSimTimer;
 
 			virtual void SetupInitialMemory();
 			virtual void StepModel();
@@ -57,14 +61,24 @@ namespace OpenNeuronCL
 			unsigned int GenerateNeuronData1(unsigned short iRefrCount, unsigned char iSpiked, unsigned int iDelayCount);
 			void ExtractNeuronData2(unsigned int iNeuronData2, unsigned short &iSynCount, unsigned char &iNeuronType);
 			unsigned int GenerateNeuronData2(unsigned short iSynCount, unsigned char iNeuronType);
-		
+
+			void ExtractSynapseData1(unsigned int iSynapseData1, unsigned char &iDelayMaskIdx, unsigned char &iSynapseType);
+			unsigned int GenerateSynapseData1(unsigned char iDelayMaskIdx, unsigned char iSynapseType);
+
 			virtual void SaveOutput(string strFilename);
+
+			virtual void StepSynapses();
+			virtual void StepNeurons();
 
 		public:
 			FastSpikingNeuralModel(INervousSystem *lpNS, double dblDT);
 			virtual ~FastSpikingNeuralModel(void);
 
 			virtual void Initialize();
+			virtual void StartingStepSequence();
+			virtual void EndingStepSequence();
+
+			void FinishProcessing();
 
 			static shared_ptr<INeuralModel> Create(INervousSystem *lpNS, double dblDT) 
 			{

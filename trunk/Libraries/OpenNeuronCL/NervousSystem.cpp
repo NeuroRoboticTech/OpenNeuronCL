@@ -80,7 +80,6 @@ void NervousSystem::CreateContext()
 	m_aryQueues.insert(make_pair(0, lpQueue));
 }
 
-
 void NervousSystem::StepSimulation()
 {
 	BOOST_FOREACH(shared_ptr<INeuralModel> lpModel, m_aryNeuralModels )
@@ -88,9 +87,23 @@ void NervousSystem::StepSimulation()
 	m_iTimeSlice++;
 }
 
+void NervousSystem::StartingStepSequence()
+{
+	BOOST_FOREACH(shared_ptr<INeuralModel> lpModel, m_aryNeuralModels )
+		lpModel->StartingStepSequence();
+}
+
+void NervousSystem::EndingStepSequence()
+{
+	BOOST_FOREACH(shared_ptr<INeuralModel> lpModel, m_aryNeuralModels )
+		lpModel->EndingStepSequence();
+}
+
 double NervousSystem::RunSimulation(float fltTime)
 {
 	int iTimeSlices = (unsigned int) ((fltTime / MinTimeStep()) + 0.5f);
+
+	StartingStepSequence();
 
 	try
 	{
@@ -107,6 +120,7 @@ double NervousSystem::RunSimulation(float fltTime)
 		std::cout << e.what() << ": Error code " << e.err() << std::endl;   
 	}
 
+	EndingStepSequence();
 
 	return m_dblRunSimTime;
 }

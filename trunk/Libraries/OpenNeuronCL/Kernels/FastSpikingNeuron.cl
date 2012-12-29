@@ -77,7 +77,6 @@ __kernel void FastSpikingNeuron(unsigned int iTimeSlice, unsigned int iSeed, __g
 								__global float *arySynapseVin, __global float *aryTestOut)
 {
 	unsigned int gid = get_global_id(0);
-	size_t gsize = get_global_size(0);
 
 	float fltVm = aryVm[gid];
 	float fltVahp = aryVahp[gid];
