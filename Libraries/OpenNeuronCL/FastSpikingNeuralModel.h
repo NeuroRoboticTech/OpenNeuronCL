@@ -7,6 +7,8 @@ namespace OpenNeuronCL
 		class FastSpikingNeuralModel : public NeuralModel
 		{
 		protected:
+			string m_strOutputfile; 
+
 			shared_ptr<Kernel> m_aryFsNeuronKernel;
 			shared_ptr<cl::CommandQueue> m_lpQueue;
 			int m_iSeed;
@@ -15,7 +17,8 @@ namespace OpenNeuronCL
 			unsigned int m_iSynapseCount;
 			unsigned short m_iSynapsesPerNeuron;
 
-			vector< float > m_aryData;
+			vector<float> m_aryTestData1;
+			vector<unsigned int> m_aryTestData2;
 
 			cl::NDRange m_FSN_Global;
 			cl::NDRange m_FSN_Local;
@@ -53,6 +56,8 @@ namespace OpenNeuronCL
 			unsigned int GenerateNeuronData1(unsigned short iRefrCount, unsigned char iSpiked, unsigned int iDelayCount);
 			void ExtractNeuronData2(unsigned int iNeuronData2, unsigned short &iSynCount, unsigned char &iNeuronType);
 			unsigned int GenerateNeuronData2(unsigned short iSynCount, unsigned char iNeuronType);
+		
+			virtual void SaveOutput(string strFilename);
 
 		public:
 			FastSpikingNeuralModel(INervousSystem *lpNS, double dblDT);
