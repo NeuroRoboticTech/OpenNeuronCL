@@ -10,11 +10,13 @@
 #define NEURON_TYPE_MASK 0x00FF0000
 #define NEURON_TYPE_SHIFT 16
 
+//#define USE_NOISE 1
+
 __constant float aryNT_Decrement[2] = {0.039210598915815353f, 0.039210598915815353f};
 __constant float aryNT_Vth[2] = {20.0f, 22.0f};
 __constant float aryNT_VahpDecrement[2] = {0.064493000507354736, 0.064493000507354736};
 __constant float aryNT_VahpWadj[2] = {-2.4271199703216553, -2.4271199703216553};
-__constant float aryNT_Vmax[2] = {-0.1, -0.2};
+__constant float aryNT_Vnoise[2] = {0.01, 0.02};
 __constant float aryNT_RefrCount[2] = {10, 15};
 __constant float aryNT_IextConv[2] = {1, 1};
 
@@ -72,7 +74,7 @@ __kernel void FastSpikingNeuron(unsigned int iTimeSlice, unsigned int iSeed, __g
 								__global float *aryVahp, __global float *aryIin,
 								__global float *aryPostSynWeightDecay, __global unsigned int *arySynapseStartIdx,
 								__global unsigned int *aryNeuronData1, __global unsigned int *aryNeuronData2,
-								__global float *aryTestOut)
+								__global float *arySynapseVin, __global float *aryTestOut)
 {
 	unsigned int gid = get_global_id(0);
 	size_t gsize = get_global_size(0);
@@ -93,13 +95,13 @@ __kernel void FastSpikingNeuron(unsigned int iTimeSlice, unsigned int iSeed, __g
 	unsigned int iSynStartIdx = arySynapseStartIdx[gid];
 	unsigned short iSynCount = 0; 
 	unsigned char iNeuronType = 0;
-
+	 
 	ExtractNeuronData1(iNeuronData1, &iRefrCount, &iSpiked, &iDelayBuffer);
 	ExtractNeuronData2(iNeuronData2, &iSynCount, &iNeuronType);
 
 	iPrevSpiked = iSpiked;
 
-	float fltVsyn = 0; //CalculateSynapticVoltage(iSynStartIdx, iSynCount, arySynapseVin);
+	float fltVsyn = CalculateSynapticVoltage(iSynStartIdx, iSynCount, arySynapseVin);
 
 	fltVahp = CalculateAHPVoltageFloat(fltVahp, iSpiked, iNeuronType);
 
@@ -108,7 +110,7 @@ __kernel void FastSpikingNeuron(unsigned int iTimeSlice, unsigned int iSeed, __g
 	float fltVnoise = 0;
 
 #ifdef USE_NOISE
-		fltVnoise = RandomFloat(gid, iTimeSlice, iSeed, -aryNT_Vmax[iNeuronType], aryNT_Vmax[iNeuronType]);
+		fltVnoise = RandomFloat(gid, iTimeSlice, iSeed, -aryNT_Vnoise[iNeuronType], aryNT_Vnoise[iNeuronType]);
 #endif
 
 	fltVm += (fltVahp + fltVext + fltVsyn + fltVnoise - (fltVm*aryNT_Decrement[iNeuronType]));
@@ -140,7 +142,7 @@ __kernel void FastSpikingNeuron(unsigned int iTimeSlice, unsigned int iSeed, __g
 	aryVahp[gid] = fltVahp;
 	aryPostSynWeightDecay[gid] = 0;
 	aryNeuronData1[gid] = iNeuronData1;
-	aryTestOut[gid] = iNeuronData1;
+	aryTestOut[gid] = fltVnoise;
 }
 
 

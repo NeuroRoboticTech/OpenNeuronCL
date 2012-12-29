@@ -18,7 +18,8 @@ namespace OpenNeuronCL
 			unsigned short m_iSynapsesPerNeuron;
 
 			vector<float> m_aryTestData1;
-			vector<unsigned int> m_aryTestData2;
+			vector<float> m_aryTestData2;
+			//vector<unsigned int> m_aryTestData2;
 
 			cl::NDRange m_FSN_Global;
 			cl::NDRange m_FSN_Local;
