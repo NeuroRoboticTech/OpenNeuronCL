@@ -147,22 +147,27 @@ void FastSpikingNeuralModel::SetupInitialMemory()
 	{
         m_aryVm[i] = 0.0f; //i*0.1f;
 		m_aryVahp[i] = 0.0f;
-		m_aryIext[i] = 0.8f;
+		m_aryIext[i] = 0; //0.8f;
 		m_aryPostSynWeightDecay[i] = 0;
 		m_arySynapseStartIdx[i] = i*m_iSynapsesPerNeuron;
 		m_aryNeuronData1[i] = GenerateNeuronData1(0, 0, 0);
-		m_aryNeuronData2[i] = GenerateNeuronData2(0, 1);
+		m_aryNeuronData2[i] = GenerateNeuronData2(m_iSynapsesPerNeuron, 0);
     }
 
 	//Initialize Synapse Data
-   for(int i=0; i<m_iSynapseCount; i++) 
+	int iSynIdx=0;
+	for(int i=0; i<m_iSynapseCount; i++) 
 	{
-        m_aryVsyn[i] = 0.0f; //i*0.1f;
+		m_aryVsyn[i] = 0.01f;
 		m_aryWeight[i] = 0.0f;
 		m_aryPreSynWeightDecay[i] = 0.0f; // 0.8f;
 		m_arySynapseTypeID[i] = 0;
 		m_aryPreSynNeuronIdx[i] = 0;
-    }
+
+		iSynIdx++;
+		if(iSynIdx >= m_iSynapsesPerNeuron)
+			iSynIdx=0;
+	}
 
 
 //	long lTotaNeuronlSize = (sizeof(m_aryVm)*m_iNeuronCount*2) + 

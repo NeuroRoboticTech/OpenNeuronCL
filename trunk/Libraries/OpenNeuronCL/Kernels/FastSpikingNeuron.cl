@@ -93,10 +93,9 @@ __kernel void FastSpikingNeuron(unsigned int iTimeSlice, unsigned int iSeed, __g
 	unsigned int iSynStartIdx = arySynapseStartIdx[gid];
 	unsigned short iSynCount = 0; 
 	unsigned char iNeuronType = 0;
-	unsigned char iNeuronTypeTest = 0;
 
 	ExtractNeuronData1(iNeuronData1, &iRefrCount, &iSpiked, &iDelayBuffer);
-	ExtractNeuronData2(iNeuronData2, &iSynCount, &iNeuronTypeTest);
+	ExtractNeuronData2(iNeuronData2, &iSynCount, &iNeuronType);
 
 	iPrevSpiked = iSpiked;
 

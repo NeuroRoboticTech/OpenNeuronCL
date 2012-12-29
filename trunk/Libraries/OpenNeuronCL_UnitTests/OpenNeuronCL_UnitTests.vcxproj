@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5AA2AC15-FA33-4B2D-961E-F999AC981DDE}</ProjectGuid>
+    <ProjectGuid>{D45584B5-0FC2-4EC9-8EB4-D5E43054CAF2}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>OpenNeuronCL_UnitTests</RootNamespace>
   </PropertyGroup>
@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;..\OpenNeuronCL;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,7 +76,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\include;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;..\OpenNeuronCL;$(NVSDKCOMPUTE_ROOT)\OpenCL\common\inc;$(BOOST_ROOT);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -97,36 +97,35 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FastSpikingNeuralModel.h" />
-    <ClInclude Include="IKernel.h" />
-    <ClInclude Include="INervousSystem.h" />
-    <ClInclude Include="INeuralModel.h" />
-    <ClInclude Include="IOpenNeuronCLBase.h" />
-    <ClInclude Include="ISimulationObject.h" />
-    <ClInclude Include="Kernel.h" />
-    <ClInclude Include="NervousSystem.h" />
-    <ClInclude Include="NeuralModel.h" />
-    <ClInclude Include="ONCL_ClassFactory.h" />
-    <ClInclude Include="ONCL_Exceptions.h" />
-    <ClInclude Include="ONCL_Timer.h" />
-    <ClInclude Include="OpenNeuronCLBase.h" />
-    <ClInclude Include="OpenNeuronCLIncludes.h" />
-    <ClInclude Include="OpenNeuronCLUtils.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
+    <ClInclude Include="..\OpenNeuronCL\FastSpikingNeuralModel.h" />
+    <ClInclude Include="..\OpenNeuronCL\IKernel.h" />
+    <ClInclude Include="..\OpenNeuronCL\INervousSystem.h" />
+    <ClInclude Include="..\OpenNeuronCL\INeuralModel.h" />
+    <ClInclude Include="..\OpenNeuronCL\IOpenNeuronCLBase.h" />
+    <ClInclude Include="..\OpenNeuronCL\ISimulationObject.h" />
+    <ClInclude Include="..\OpenNeuronCL\Kernel.h" />
+    <ClInclude Include="..\OpenNeuronCL\NervousSystem.h" />
+    <ClInclude Include="..\OpenNeuronCL\NeuralModel.h" />
+    <ClInclude Include="..\OpenNeuronCL\ONCL_ClassFactory.h" />
+    <ClInclude Include="..\OpenNeuronCL\ONCL_Exceptions.h" />
+    <ClInclude Include="..\OpenNeuronCL\ONCL_Timer.h" />
+    <ClInclude Include="..\OpenNeuronCL\OpenNeuronCLBase.h" />
+    <ClInclude Include="..\OpenNeuronCL\OpenNeuronCLIncludes.h" />
+    <ClInclude Include="..\OpenNeuronCL\OpenNeuronCLUtils.h" />
+    <ClInclude Include="..\OpenNeuronCL\stdafx.h" />
     <ClInclude Include="TestFastSpikingNeuralModel.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FastSpikingNeuralModel.cpp" />
-    <ClCompile Include="Kernel.cpp" />
-    <ClCompile Include="NervousSystem.cpp" />
-    <ClCompile Include="NeuralModel.cpp" />
-    <ClCompile Include="ONCL_ClassFactory.cpp" />
-    <ClCompile Include="ONCL_Timer.cpp" />
-    <ClCompile Include="OpenNeuronCLBase.cpp" />
-    <ClCompile Include="OpenNeuronCLUtils.cpp" />
+    <ClCompile Include="..\OpenNeuronCL\FastSpikingNeuralModel.cpp" />
+    <ClCompile Include="..\OpenNeuronCL\Kernel.cpp" />
+    <ClCompile Include="..\OpenNeuronCL\NervousSystem.cpp" />
+    <ClCompile Include="..\OpenNeuronCL\NeuralModel.cpp" />
+    <ClCompile Include="..\OpenNeuronCL\ONCL_ClassFactory.cpp" />
+    <ClCompile Include="..\OpenNeuronCL\ONCL_Timer.cpp" />
+    <ClCompile Include="..\OpenNeuronCL\OpenNeuronCLBase.cpp" />
+    <ClCompile Include="..\OpenNeuronCL\OpenNeuronCLUtils.cpp" />
     <ClCompile Include="OpenNeuronCL_UnitTests.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="..\OpenNeuronCL\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
