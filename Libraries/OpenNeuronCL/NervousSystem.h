@@ -22,6 +22,9 @@ namespace OpenNeuronCL
 
 		virtual void CreateContext();
 
+		virtual void StartingStepSequence();
+		virtual void EndingStepSequence();
+
 	public:
 		NervousSystem(void);
 		virtual ~NervousSystem(void);
