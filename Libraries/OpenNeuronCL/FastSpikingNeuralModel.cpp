@@ -213,7 +213,8 @@ void FastSpikingNeuralModel::SetupInitialMemory()
 		kernel.setArg(6, *(m_bufSynapseStartIdx.get()));
 		kernel.setArg(7, *(m_bufNeuronData1.get()));
 		kernel.setArg(8, *(m_bufNeuronData2.get()));
-		kernel.setArg(9, *(m_bufTestOut.get()));
+		kernel.setArg(9, *(m_bufVsyn.get()));
+		kernel.setArg(10, *(m_bufTestOut.get()));
 	}
 	catch(cl::Error e)
 	{
@@ -246,7 +247,7 @@ void FastSpikingNeuralModel::SetupInitialMemory()
 	m_lpQueue->enqueueWriteBuffer(*(m_bufNeuronData2.get()), CL_TRUE, 0, sizeof(m_aryNeuronData2)*m_iNeuronCount,  m_aryNeuronData2, NULL, NULL);
 
 	printf("m_bufVsyn.\n");
-	//m_lpQueue->enqueueWriteBuffer(*(m_bufVsyn.get()), CL_TRUE, 0, sizeof(m_aryVsyn)*m_iSynapseCount,  m_aryVsyn, NULL, NULL);
+	m_lpQueue->enqueueWriteBuffer(*(m_bufVsyn.get()), CL_TRUE, 0, sizeof(m_aryVsyn)*m_iSynapseCount,  m_aryVsyn, NULL, NULL);
 
 	printf("Ended buffer enqueuing.\n");
 }
@@ -261,13 +262,14 @@ void FastSpikingNeuralModel::StepModel()
 
 	m_lpQueue->enqueueNDRangeKernel(FSN_kernel, NULL, m_FSN_Global, m_FSN_Local);
 
-	m_lpQueue->enqueueReadBuffer(*(m_bufTestOut.get()), CL_TRUE, 0, sizeof(m_aryTestOut)*m_iNeuronCount,  m_aryTestOut, NULL, NULL);
-	m_lpQueue->enqueueReadBuffer(*(m_bufVm.get()), CL_TRUE, 0, sizeof(m_aryVm)*m_iNeuronCount,  m_aryVm, NULL, NULL);
+	//m_lpQueue->enqueueReadBuffer(*(m_bufTestOut.get()), CL_TRUE, 0, sizeof(m_aryTestOut)*m_iNeuronCount,  m_aryTestOut, NULL, NULL);
+	//m_lpQueue->enqueueReadBuffer(*(m_bufVm.get()), CL_TRUE, 0, sizeof(m_aryVm)*m_iNeuronCount,  m_aryVm, NULL, NULL);
 
-	unsigned int iVal = (unsigned int) m_aryTestOut[0];
+	//unsigned int iVal = (unsigned int) m_aryTestOut[0];
 
-	m_aryTestData1.push_back(m_aryVm[0]);
-	m_aryTestData2.push_back(iVal);
+	//m_aryTestData1.push_back(m_aryVm[0]);
+	//m_aryTestData2.push_back(iVal);
+	//m_aryTestData2.push_back(m_aryTestOut[0]);
 	//Display updated buffer
 	//for(int i=0; i<10; i++) 
 	//{
