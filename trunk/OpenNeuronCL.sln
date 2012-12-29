@@ -11,6 +11,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenNeuronCL_ConsoleTest", 
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenNeuronCL_UnitTests", "Libraries\OpenNeuronCL\OpenNeuronCL_UnitTests.vcxproj", "{5AA2AC15-FA33-4B2D-961E-F999AC981DDE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5E740A4B-11BA-49CD-9FCA-7475B46E34BE} = {5E740A4B-11BA-49CD-9FCA-7475B46E34BE}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

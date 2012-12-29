@@ -11,6 +11,7 @@ namespace OpenNeuronCL
 			virtual ~TestFastSpikingNeuralModel(void);
 
 			static void TestGenerateNeuronData1();
+			static void TestGenerateNeuronData2();
 		};
 
 	}

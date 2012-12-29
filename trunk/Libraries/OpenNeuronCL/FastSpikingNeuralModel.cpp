@@ -5,13 +5,13 @@
 
 #define REFR_COUNT_MASK 0x0000007F
 #define SPIKED_MASK 0x00000080
-#define SPIKED_SHIFT 3
+#define SPIKED_SHIFT 7
 #define DELAY_COUNT_MASK 0xFFFFFF00
 #define DELAY_COUNT_SHIFT 8
 #define DELAY_ADD_SPIKE 4
 #define SYN_COUNT_MASK 0x0000FFFF
 #define NEURON_TYPE_MASK 0x00FF0000
-#define NEURON_TYPE_SHIFT 8
+#define NEURON_TYPE_SHIFT 16
 
 namespace OpenNeuronCL
 { 
@@ -42,6 +42,8 @@ FastSpikingNeuralModel::FastSpikingNeuralModel(INervousSystem *lpNS, double dblD
 
 FastSpikingNeuralModel::~FastSpikingNeuralModel(void) 
 {
+	SaveOutput(m_strOutputfile);
+
 	if(m_aryVm) {delete[] m_aryVm; m_aryVm = NULL;}
 	if(m_aryVahp){ delete[] m_aryVahp; m_aryVahp = NULL;}
 	if(m_aryIext) {delete[] m_aryIext; m_aryIext = NULL;}
@@ -58,6 +60,7 @@ FastSpikingNeuralModel::~FastSpikingNeuralModel(void)
 
 void FastSpikingNeuralModel::Initialize()
 {
+	m_strOutputfile = "C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\FastSpikingNeuron.dat";
 	m_aryFsNeuronKernel = dynamic_pointer_cast<Kernel>(AddKernel("C:\\Projects\\AnimatLabSDK\\OpenNeuronCL\\Libraries\\OpenNeuronCL\\Kernels\\FastSpikingNeuron.cl", "FastSpikingNeuron"));
 
 	//m_iGlobalDataSize = 100;    
@@ -94,8 +97,8 @@ void FastSpikingNeuralModel::ExtractNeuronData1(unsigned int iNeuronData1, unsig
 unsigned int FastSpikingNeuralModel::GenerateNeuronData1(unsigned short iRefrCount, unsigned char iSpiked, unsigned int iDelayCount)
 {
 	//set the delay bits and shift over
-	iDelayCount = (iDelayCount << 1) | (((unsigned int) iSpiked) << DELAY_ADD_SPIKE);
-	unsigned int iData = (iDelayCount << DELAY_COUNT_SHIFT) | (iSpiked << SPIKED_SHIFT) | iRefrCount;
+	iDelayCount = (iDelayCount << 1) | iSpiked;
+	unsigned int iData = (iDelayCount << DELAY_COUNT_SHIFT) | (iSpiked << SPIKED_SHIFT) | (iRefrCount & REFR_COUNT_MASK);
 	return iData;
 }
 
@@ -147,8 +150,8 @@ void FastSpikingNeuralModel::SetupInitialMemory()
 		m_aryIext[i] = 0.8f;
 		m_aryPostSynWeightDecay[i] = 0;
 		m_arySynapseStartIdx[i] = i*m_iSynapsesPerNeuron;
-		m_aryNeuronData1[i] = 0;
-		m_aryNeuronData2[i] = 0;
+		m_aryNeuronData1[i] = GenerateNeuronData1(0, 0, 0);
+		m_aryNeuronData2[i] = GenerateNeuronData2(0, 1);
     }
 
 	//Initialize Synapse Data
@@ -253,10 +256,13 @@ void FastSpikingNeuralModel::StepModel()
 
 	m_lpQueue->enqueueNDRangeKernel(FSN_kernel, NULL, m_FSN_Global, m_FSN_Local);
 
-	//m_lpQueue->enqueueReadBuffer(*(m_bufTestOut.get()), CL_TRUE, 0, sizeof(m_aryTestOut)*m_iNeuronCount,  m_aryTestOut, NULL, NULL);
-	//m_lpQueue->enqueueReadBuffer(*(m_bufVm.get()), CL_TRUE, 0, sizeof(m_aryVm)*m_iNeuronCount,  m_aryVm, NULL, NULL);
+	m_lpQueue->enqueueReadBuffer(*(m_bufTestOut.get()), CL_TRUE, 0, sizeof(m_aryTestOut)*m_iNeuronCount,  m_aryTestOut, NULL, NULL);
+	m_lpQueue->enqueueReadBuffer(*(m_bufVm.get()), CL_TRUE, 0, sizeof(m_aryVm)*m_iNeuronCount,  m_aryVm, NULL, NULL);
 
-	//m_aryData.push_back(m_aryVm[0]);
+	unsigned int iVal = (unsigned int) m_aryTestOut[0];
+
+	m_aryTestData1.push_back(m_aryVm[0]);
+	m_aryTestData2.push_back(iVal);
 	//Display updated buffer
 	//for(int i=0; i<10; i++) 
 	//{
@@ -265,6 +271,23 @@ void FastSpikingNeuralModel::StepModel()
 	//}
 	//printf("\n\n");
 }
+
+void FastSpikingNeuralModel::SaveOutput(string strFilename)
+{
+	if(m_aryTestData1.size() > 0 && m_aryTestData2.size() > 0 && m_aryTestData1.size() == m_aryTestData2.size())
+	{
+		ofstream oStream;
+		oStream.open(strFilename.c_str());
+
+		int iTotalRows = m_aryTestData1.size();
+		for(int iRow=0; iRow< iTotalRows; iRow++)
+			oStream << (iRow*m_fltTimeStep) << "\t" << m_aryTestData1[iRow] << "\t" << m_aryTestData2[iRow] << "\n";
+
+		oStream.close();
+	}
+
+}
+
 
 	}
 }
