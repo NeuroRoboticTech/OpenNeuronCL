@@ -1,22 +1,33 @@
 
+Assuming
+2^17 neurons = 
+
+
+Fast Spiking Neuron: 8, 4 byte words
+Fast Spiking Synapse: 5, 4 byte words
+
 
 Fast Spiking Neuron:
-Vm 0, 1
+Vm
 Vahp
-Iin
-PostSynWeightDecay
+Iext
+PostSynWeightDecay 
 Data1
   0-6: RefrCount
   7: Spike 
   8-31: Delay
+SynapseStartIdx
 
-6, floats
+SynapseCount  short
+NeuronTypeID  short
+
+7, floats
 
 IGF spiking neuron:
 Same as above but needs 
 m_fltGahp
 
-total 7 floats
+total 8 floats
 
 
 
@@ -24,9 +35,12 @@ Fast Spiking Synapse:
 Vsyn
 Weight
 PreSynWeightDecay
-Delay_count (char)
+Delay_count (short)
+Synapse Type (short)
+PreSynNeuronIdx
 
-Total 3 floats
+
+Total 5 floats
 
 
 IGF spiking synapse
@@ -48,6 +62,7 @@ AHP_EqPot
 
 
 Fast Spiking Synapse Type Data
+
 
 
 

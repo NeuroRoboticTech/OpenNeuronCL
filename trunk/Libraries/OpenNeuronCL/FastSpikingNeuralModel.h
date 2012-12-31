@@ -22,6 +22,9 @@ namespace OpenNeuronCL
 			vector<float> m_aryTestData2;
 			//vector<unsigned int> m_aryTestData2;
 
+			vector<float> m_aryTestData3;
+			vector<float> m_aryTestData4;
+
 			cl::NDRange m_FSN_Global;
 			cl::NDRange m_FSN_Local;
 

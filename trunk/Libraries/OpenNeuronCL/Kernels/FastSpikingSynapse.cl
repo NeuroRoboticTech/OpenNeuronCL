@@ -5,11 +5,11 @@
 #define DELAY_COUNT_MASK 0xFFFFFF00
 #define DELAY_COUNT_SHIFT 8
 #define DELAY_ADD_SPIKE 4
-#define SYN_COUNT_MASK 0x0000FFFF
+#define SYNAPSE_COUNT_MASK 0x0000FFFF
 #define NEURON_TYPE_MASK 0x00FF0000
 #define NEURON_TYPE_SHIFT 16
 
-#define SYN_DELAY_MASK   0x000000FF
+#define SYNAPSE_DELAY_MASK   0x000000FF
 #define SYNAPSE_TYPE_MASK 0x0000FF00
 #define SYNAPSE_TYPE_SHIFT 8
 
@@ -18,7 +18,7 @@ __constant float aryST_Decrement[2] = {0.064493001f, 0.039210598915815353f};
 
 inline void ExtractSynapseData1(unsigned int iSynapseData1, unsigned char *iDelayMaskIdx, unsigned char *iSynapseType)
 {
-	*iDelayMaskIdx = (iSynapseData1 & SYN_DELAY_MASK);
+	*iDelayMaskIdx = (iSynapseData1 & SYNAPSE_DELAY_MASK);
 	*iSynapseType = (iSynapseData1 & SYNAPSE_TYPE_MASK) >> SYNAPSE_TYPE_SHIFT;
 }
 

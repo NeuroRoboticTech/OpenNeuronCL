@@ -6,7 +6,7 @@
 #define DELAY_COUNT_MASK 0xFFFFFF00
 #define DELAY_COUNT_SHIFT 8
 #define DELAY_ADD_SPIKE 4
-#define SYN_COUNT_MASK 0x0000FFFF
+#define SYNAPSE_COUNT_MASK 0x0000FFFF
 #define NEURON_TYPE_MASK 0x00FF0000
 #define NEURON_TYPE_SHIFT 16
 
@@ -66,7 +66,7 @@ inline unsigned int GenerateNeuronData1(unsigned short iRefrCount, unsigned char
 
 inline void ExtractNeuronData2(unsigned int iNeuronData2, unsigned short *iSynCount, unsigned char *iNeuronType)
 {
-	*iSynCount = (iNeuronData2 & SYN_COUNT_MASK);
+	*iSynCount = (iNeuronData2 & SYNAPSE_COUNT_MASK);
 	*iNeuronType = (iNeuronData2 & NEURON_TYPE_MASK) >> NEURON_TYPE_SHIFT;
 }
 
