@@ -1,0 +1,25 @@
+1. Checkout the repo from https://xp-dev.com/svn/OpenNeuronCL/trunk using SVN.
+You must place this in the AnimatLabSDK folder at the same level as AnimatPublicSource.
+Eventually, it will be part of the regular sdk as well, and other parts of animatlab will use it.
+
+2. Download boost and install it. 
+http://www.boostpro.com/download/
+BoostPro 1.51.0
+
+3. Make sure you have the BOOST_ROOT environment var, and that it is pointing to your boost install dir.
+C:\Program Files\boost\boost_1_51
+for me.
+
+4. If you have nVidia then download and install the following opencl drivers.
+https://developer.nvidia.com/cuda-toolkit-42-archive
+NOTE: Do NOT try to use cuda 5. At least at the time I wrote this it did not have
+the necessary opencl tools. Instead, use 4.2 from the link above.
+Install the toolkit, drivers, and sdk.
+
+5. load the OpenNeuronCL/OpenNeuronCL.sln solution and try to compile it. 
+To debug it you need to set the OpenNeuronCL_ConsoleTest to be the startup application.
+To run/debug the unit tests you need OpenNeuronCL_UnitTests to be the startup.
+
+
+
+
