@@ -3,7 +3,7 @@
 
 #define OPENNEURONCL_PORT __declspec( dllexport )
 
-#include "AnimatSim.h"
+//#include "AnimatSim.h"
 #include "OpenNeuronCLConstants.h"
 
 #define Nl_Err_lSynapseToAddNull -3013
